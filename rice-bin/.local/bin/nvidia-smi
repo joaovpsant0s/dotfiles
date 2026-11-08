@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Wrapper seguro para nvidia-smi via lib/wsl no Arch Linux WSL 2
+set -euo pipefail
+
+if [ -x "/usr/lib/wsl/lib/nvidia-smi" ]; then
+  exec "/usr/lib/wsl/lib/nvidia-smi" "$@"
+elif [ -x "/usr/bin/nvidia-smi" ]; then
+  exec "/usr/bin/nvidia-smi" "$@"
+elif command -v nvidia-smi.exe >/dev/null 2>&1; then
+  exec nvidia-smi.exe "$@"
+else
+  echo "[ERROR] nvidia-smi não encontrado em /usr/lib/wsl/lib nem no host Windows." >&2
+  exit 127
+fi

@@ -1,0 +1,6 @@
+# Pacotes AUR (instalados via yay sem root)
+zsh-antidote
+basedpyright
+lazysql-bin
+sqlfluff
+markdownlint-cli2

@@ -1,0 +1,8 @@
+# Ecossistema TUI integrado (core/extra)
+yazi
+ffmpegthumbnailer
+poppler
+lazygit
+lazydocker
+btop
+fastfetch

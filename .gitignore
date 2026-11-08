@@ -1,0 +1,28 @@
+# Generated theme artifacts (derived from theme/palette.toml + identity/persona.toml)
+theme/generated/*
+!theme/generated/.gitkeep
+
+# Tool-specific generated theme targets inside Stow packages
+tmux/.config/tmux/theme-generated.conf
+nvim/.config/nvim/lua/config/theme_generated.lua
+yazi/.config/yazi/theme.toml
+btop/.config/btop/themes/brasilia-night.theme
+lazygit/.config/lazygit/theme.yml
+lazydocker/.config/lazydocker/config.yml
+git/.config/git/delta-theme.gitconfig
+fastfetch/.config/fastfetch/config.jsonc
+starship/.config/starship.toml
+windows/config/wezterm/colors/brasilia-night.toml
+windows/config/glazewm/theme.yaml
+windows/config/zebar/theme.css
+
+# Local state, backups, caches, and OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.env
+*.bak
+.cache/
+windows/config/fastfetch/config.jsonc

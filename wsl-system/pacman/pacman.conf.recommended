@@ -1,0 +1,6 @@
+# Opções recomendadas para /etc/pacman.conf em Arch Linux WSL 2:
+# Adicione ou descomente na seção [options]:
+Color
+CheckSpace
+VerbosePkgLists
+ParallelDownloads = 5

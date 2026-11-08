@@ -1,0 +1,19 @@
+# =============================================================================
+# BRASILIA-NIGHT — C:\Users\joaovpsantos\.wslconfig (Exemplo Otimizado)
+# Dimensionado para o hardware auditado:
+#   CPU: 13th Gen Intel Core i5-13420H (8 Cores / 12 Logical Processors)
+#   RAM: 15.71 GB (~16 GB)
+#   GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU
+# =============================================================================
+
+[wsl2]
+memory = 8GB
+processors = 8
+swap = 2GB
+pageReporting = true
+guiApplications = true
+nestedVirtualization = true
+
+[experimental]
+autoMemoryReclaim = gradual
+sparseVhd = true

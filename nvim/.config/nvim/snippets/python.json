@@ -1,0 +1,18 @@
+{
+  "apc_solve": {
+    "prefix": "apcsol",
+    "body": [
+      "import sys",
+      "",
+      "",
+      "def solve() -> None:",
+      "    lines = sys.stdin.read().splitlines()",
+      "    ${1:pass}",
+      "",
+      "",
+      "if __name__ == \"__main__\":",
+      "    solve()"
+    ],
+    "description": "Template Python fast I/O para exercícios de APC (UnB/FGA)"
+  }
+}

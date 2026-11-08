@@ -1,0 +1,15 @@
+{
+  "apc_main": {
+    "prefix": "apcmain",
+    "body": [
+      "#include <stdio.h>",
+      "#include <stdlib.h>",
+      "",
+      "int main(void) {",
+      "    ${1:// código APC}",
+      "    return EXIT_SUCCESS;",
+      "}"
+    ],
+    "description": "Template C17 para exercícios de APC (UnB/FGA)"
+  }
+}

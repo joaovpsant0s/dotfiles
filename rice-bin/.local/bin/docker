@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Wrapper seguro para Docker CLI no Arch Linux WSL 2
+set -euo pipefail
+
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLEAN_PATH="$(printf '%s' "$PATH" | awk -v RS=':' -v ORS=':' -v self="$SELF_DIR" '$0 != self && $0 != ""' | sed 's/:$//')"
+
+if sys_docker="$(PATH="$CLEAN_PATH" command -v docker 2>/dev/null)"; then
+  exec "$sys_docker" "$@"
+fi
+
+WIN_DOCKER="/mnt/c/Program Files/Docker/Docker/resources/bin/docker.exe"
+if [ -x "$WIN_DOCKER" ]; then
+  exec "$WIN_DOCKER" "$@"
+fi
+
+echo "[ERROR] Docker CLI não encontrado nem no Linux (/usr/bin/docker) nem no Docker Desktop." >&2
+exit 127

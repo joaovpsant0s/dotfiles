@@ -1,0 +1,22 @@
+_rice_completions() {
+  local cur prev
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+  if [ "$COMP_CWORD" -eq 1 ]; then
+    COMPREPLY=( $(compgen -W "theme status sync doctor benchmark help" -- "$cur") )
+    return 0
+  fi
+
+  case "${COMP_WORDS[1]}" in
+    theme)
+      if [ "$COMP_CWORD" -eq 2 ]; then
+        COMPREPLY=( $(compgen -W "night storm moon" -- "$cur") )
+      elif [ "$COMP_CWORD" -eq 3 ]; then
+        COMPREPLY=( $(compgen -W "blue purple cyan green orange red --no-sync --dry-run" -- "$cur") )
+      fi
+      ;;
+  esac
+}
+complete -F _rice_completions rice

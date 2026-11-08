@@ -1,0 +1,7 @@
+"$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
+
+[mgr]
+prepend_keymap = [
+  { on = ["<C-s>"], run = 'shell "$SHELL" --block --confirm', desc = "Abrir shell no diretório atual" },
+  { on = ["g", "b"], run = "cd ~/brasilia-night", desc = "Ir para brasilia-night" },
+]

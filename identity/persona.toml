@@ -1,0 +1,39 @@
+# =============================================================================
+# BRASILIA-NIGHT — PERSONAL & ACADEMIC IDENTITY (Single Source of Truth)
+# =============================================================================
+
+owner_name = "João Victor Pereira Santos"
+display_name = "João Victor"
+username = "JVZerinho"
+github_username = "joaovpsant0s"
+hostname = "gama"
+location = "Brasília, DF, Brasil"
+academic_affiliation = "Universidade de Brasília (UnB) - Faculdade do Gama (FGA)"
+professional_role = "Estudante de Engenharia de Software e Monitor de Algoritmo e Programação em Computadores"
+
+primary_languages = [
+    "Python",
+    "SQL",
+    "C",
+    "Java",
+    "Bash",
+    "Lua",
+]
+
+technical_focus = [
+    "Backend Engineering",
+    "Data Engineering",
+    "Database Systems",
+    "Linux Systems",
+    "DevOps",
+    "Docker",
+    "CI/CD",
+    "Algorithms and Data Structures",
+    "Software Engineering",
+]
+
+[academic]
+degree_current = "Bacharelado em Engenharia de Software (UnB/FGA, conclusão prevista: Jul/2030)"
+degree_completed = "Tecnólogo em Análise e Desenvolvimento de Sistemas (concluído: Jul/2026)"
+teaching_role = "Monitor de Algoritmo e Programação em Computadores (UnB, desde Ago/2026)"
+c_compiler_flags = "-O2 -Wall -Wextra -std=c17"

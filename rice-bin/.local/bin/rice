@@ -1,0 +1,328 @@
+#!/usr/bin/env bash
+# =============================================================================
+# BRASILIA-NIGHT — RICE WORKSTATION CLI
+# Gerencia temas, estado (~/.config/rice/state.env), sincronização e diagnóstico
+# =============================================================================
+set -euo pipefail
+
+resolve_repo_root() {
+  if [ -n "${BRASILIA_NIGHT_ROOT:-}" ] && [ -d "${BRASILIA_NIGHT_ROOT}" ]; then
+    printf '%s\n' "$BRASILIA_NIGHT_ROOT"
+    return 0
+  fi
+  local src="${BASH_SOURCE[0]}"
+  while [ -L "$src" ]; do
+    local dir
+    dir="$(cd -P "$(dirname "$src")" && pwd)"
+    src="$(readlink "$src")"
+    [[ "$src" != /* ]] && src="$dir/$src"
+  done
+  local bin_dir
+  bin_dir="$(cd -P "$(dirname "$src")" && pwd)"
+  local candidate
+  candidate="$(cd "$bin_dir/../../.." 2>/dev/null && pwd || true)"
+  if [ -n "$candidate" ] && [ -f "$candidate/theme/palette.toml" ]; then
+    printf '%s\n' "$candidate"
+    return 0
+  fi
+  if [ -d "$HOME/brasilia-night" ]; then
+    printf '%s\n' "$HOME/brasilia-night"
+    return 0
+  fi
+  echo "[ERROR] Não foi possível localizar o repositório brasilia-night." >&2
+  return 1
+}
+
+REPO_ROOT="$(resolve_repo_root)"
+STATE_DIR="${RICE_STATE_DIR:-$HOME/.config/rice}"
+STATE_FILE="${RICE_STATE_FILE:-$STATE_DIR/state.env}"
+
+VALID_VARIANTS="night storm moon"
+VALID_ACCENTS="blue purple cyan green orange red"
+
+is_in_list() {
+  local needle="$1"
+  local list="$2"
+  for item in $list; do
+    if [ "$item" = "$needle" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+ensure_state_file() {
+  mkdir -p "$STATE_DIR"
+  chmod 700 "$STATE_DIR"
+  if [ ! -f "$STATE_FILE" ]; then
+    local tmp
+    tmp="$(mktemp "$STATE_DIR/.state.env.XXXXXX")"
+    cat > "$tmp" << 'STATE_EOF'
+RICE_THEME=night
+RICE_ACCENT=purple
+RICE_GREETING=1
+RICE_WINDOWS_SYNC=1
+STATE_EOF
+    chmod 600 "$tmp"
+    mv -f "$tmp" "$STATE_FILE"
+  else
+    chmod 600 "$STATE_FILE"
+  fi
+}
+
+get_state_key() {
+  local key="$1"
+  local default_val="${2:-}"
+  ensure_state_file
+  local val
+  val="$(awk -F'=' -v k="$key" '
+    $0 !~ /^[[:space:]]*#/ && $1 == k {
+      v = substr($0, index($0, "=") + 1)
+      gsub(/^[[:space:]]*["'\'']?|["'\'']?[[:space:]]*$/, "", v)
+      print v
+      exit
+    }
+  ' "$STATE_FILE")"
+  if [ -n "$val" ]; then
+    printf '%s\n' "$val"
+  else
+    printf '%s\n' "$default_val"
+  fi
+}
+
+update_state_keys() {
+  ensure_state_file
+  python3 - "$STATE_FILE" "$@" << 'PYEOF'
+import os
+import pathlib
+import re
+import sys
+import tempfile
+
+state_path = pathlib.Path(sys.argv[1])
+updates = {}
+for arg in sys.argv[2:]:
+    if "=" in arg:
+        k, v = arg.split("=", 1)
+        if not re.match(r"^[A-Z0-9_]+$", k):
+            sys.exit(f"[ERROR] Chave de estado inválida: {k}")
+        if any(c in v for c in ("\n", "\r", "\0")):
+            sys.exit(f"[ERROR] Valor inválido para {k}")
+        updates[k] = v
+
+lines = []
+if state_path.is_file():
+    lines = state_path.read_text(encoding="utf-8").splitlines()
+
+seen = set()
+new_lines = []
+for line in lines:
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#") or "=" not in line:
+        new_lines.append(line)
+        continue
+    k, _ = line.split("=", 1)
+    k = k.strip()
+    if k in updates:
+        new_lines.append(f"{k}={updates[k]}")
+        seen.add(k)
+    else:
+        new_lines.append(line)
+
+for k, v in updates.items():
+    if k not in seen:
+        new_lines.append(f"{k}={v}")
+
+content = "\n".join(new_lines) + "\n"
+fd, tmp_name = tempfile.mkstemp(prefix=".state.env.", dir=str(state_path.parent))
+try:
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(content)
+    os.chmod(tmp_name, 0o600)
+    os.replace(tmp_name, state_path)
+finally:
+    if os.path.exists(tmp_name):
+        os.unlink(tmp_name)
+PYEOF
+}
+
+usage() {
+  cat << 'USAGE'
+╭──────────────────────────────────────────────────────────────────╮
+│  BRASILIA-NIGHT — rice CLI (Workstation & Theme Orchestrator)    │
+╰──────────────────────────────────────────────────────────────────╯
+Uso:
+  rice theme <night|storm|moon> [blue|purple|cyan|green|orange|red] [--no-sync] [--dry-run]
+  rice status
+  rice sync [--dry-run]
+  rice doctor
+  rice benchmark
+  rice help
+USAGE
+}
+
+cmd_theme() {
+  local variant=""
+  local accent=""
+  local no_sync=0
+  local dry_run=0
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --no-sync)
+        no_sync=1
+        shift
+        ;;
+      --dry-run|-n)
+        dry_run=1
+        shift
+        ;;
+      -*)
+        echo "[ERROR] Opção desconhecida para 'rice theme': $1" >&2
+        exit 2
+        ;;
+      *)
+        if [ -z "$variant" ]; then
+          variant="$1"
+        elif [ -z "$accent" ]; then
+          accent="$1"
+        else
+          echo "[ERROR] Argumento extra inesperado: $1" >&2
+          exit 2
+        fi
+        shift
+        ;;
+    esac
+  done
+
+  if [ -z "$variant" ]; then
+    echo "[ERROR] Especifique a variante: night, storm ou moon." >&2
+    exit 2
+  fi
+
+  if ! is_in_list "$variant" "$VALID_VARIANTS"; then
+    echo "[ERROR] Variante inválida '$variant'. Valores aceitos: $VALID_VARIANTS" >&2
+    exit 2
+  fi
+
+  if [ -z "$accent" ]; then
+    accent="$(get_state_key "RICE_ACCENT" "purple")"
+  fi
+
+  if ! is_in_list "$accent" "$VALID_ACCENTS"; then
+    echo "[ERROR] Acento inválido '$accent'. Valores aceitos: $VALID_ACCENTS" >&2
+    exit 2
+  fi
+
+  if [ "$dry_run" -eq 1 ]; then
+    RICE_STATE_FILE="$STATE_FILE" "$REPO_ROOT/theme/generate.sh" --variant "$variant" --accent "$accent" --dry-run
+    echo "[DRY-RUN] Estado ~/.config/rice/state.env não foi modificado."
+    return 0
+  fi
+
+  update_state_keys "RICE_THEME=$variant" "RICE_ACCENT=$accent"
+  RICE_STATE_FILE="$STATE_FILE" "$REPO_ROOT/theme/generate.sh" --variant "$variant" --accent "$accent"
+
+  local reloaded=()
+  local restart_needed=("btop (se aberto)" "yazi (se aberto)" "lazygit/lazydocker (próxima execução)")
+
+  # Reload Tmux if server is running
+  if command -v tmux >/dev/null 2>&1 && tmux list-sessions >/dev/null 2>&1; then
+    if [ -f "$HOME/.config/tmux/tmux.conf" ]; then
+      tmux source-file "$HOME/.config/tmux/tmux.conf" >/dev/null 2>&1 || true
+      reloaded+=("tmux (status bar & bordas recarregadas)")
+    elif [ -f "$REPO_ROOT/tmux/.config/tmux/theme-generated.conf" ]; then
+      tmux source-file "$REPO_ROOT/tmux/.config/tmux/theme-generated.conf" >/dev/null 2>&1 || true
+      reloaded+=("tmux (theme-generated.conf recarregado)")
+    fi
+  fi
+
+  reloaded+=("starship (próximo prompt)" "fastfetch (próxima execução)" "git-delta (próximo diff)")
+
+  local win_sync
+  win_sync="$(get_state_key "RICE_WINDOWS_SYNC" "1")"
+  if [ "$no_sync" -eq 0 ] && [ "$win_sync" = "1" ]; then
+    if command -v pwsh.exe >/dev/null 2>&1 && [ -f "$REPO_ROOT/windows/scripts/Sync-WindowsRice.ps1" ]; then
+      local win_script
+      win_script="$(wslpath -w "$REPO_ROOT/windows/scripts/Sync-WindowsRice.ps1" 2>/dev/null || true)"
+      if [ -n "$win_script" ]; then
+        if pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$win_script" -Quiet >/dev/null 2>&1; then
+          reloaded+=("Windows Rice (WezTerm, GlazeWM, Zebar, Fastfetch sincronizados)")
+        fi
+      fi
+    fi
+  fi
+
+  echo "╭──────────────────────────────────────────────────────────────────╮"
+  printf "│  Tema ativo: %-10s | Acento: %-12s                   │\n" "$variant" "$accent"
+  echo "╰──────────────────────────────────────────────────────────────────╯"
+  echo "Recarregado automaticamente:"
+  for item in "${reloaded[@]}"; do
+    echo "  ✓ $item"
+  done
+  echo "Exige nova abertura ou reload manual:"
+  for item in "${restart_needed[@]}"; do
+    echo "  • $item"
+  done
+}
+
+cmd_status() {
+  ensure_state_file
+  local theme accent greeting win_sync
+  theme="$(get_state_key "RICE_THEME" "night")"
+  accent="$(get_state_key "RICE_ACCENT" "purple")"
+  greeting="$(get_state_key "RICE_GREETING" "1")"
+  win_sync="$(get_state_key "RICE_WINDOWS_SYNC" "1")"
+
+  echo "╭────────────────── BRASILIA-NIGHT STATUS ──────────────────╮"
+  echo "  Repositório      : $REPO_ROOT"
+  echo "  Arquivo Estado   : $STATE_FILE (permissões: $(stat -c '%a' "$STATE_FILE"))"
+  echo "  Variante Ativa   : $theme"
+  echo "  Acento Ativo     : $accent"
+  echo "  Saudação Shell   : $greeting"
+  echo "  Sync Windows     : $win_sync"
+  echo "╰───────────────────────────────────────────────────────────╯"
+}
+
+cmd_sync() {
+  local extra_args=()
+  if [ "${1:-}" = "--dry-run" ] || [ "${1:-}" = "-n" ]; then
+    extra_args+=("-WhatIf")
+  fi
+  if ! command -v pwsh.exe >/dev/null 2>&1; then
+    echo "[WARN] pwsh.exe não encontrado no PATH de interoperabilidade WSL." >&2
+    return 1
+  fi
+  local win_script
+  win_script="$(wslpath -w "$REPO_ROOT/windows/scripts/Sync-WindowsRice.ps1")"
+  pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$win_script" "${extra_args[@]}"
+}
+
+subcmd="${1:-status}"
+shift || true
+
+case "$subcmd" in
+  theme)
+    cmd_theme "$@"
+    ;;
+  status)
+    cmd_status
+    ;;
+  sync)
+    cmd_sync "$@"
+    ;;
+  doctor)
+    exec "$REPO_ROOT/scripts/validate-environment.sh" "$@"
+    ;;
+  benchmark)
+    exec "$REPO_ROOT/scripts/benchmark.sh" "$@"
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    echo "[ERROR] Subcomando desconhecido: $subcmd" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

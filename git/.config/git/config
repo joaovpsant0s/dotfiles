@@ -1,0 +1,45 @@
+# =============================================================================
+# BRASILIA-NIGHT — MODULAR GIT CONFIGURATION
+# =============================================================================
+[user]
+    name = João Victor Pereira Santos
+
+[init]
+    defaultBranch = main
+
+[core]
+    editor = nvim
+    autocrlf = input
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true
+    features = brasilia-night
+
+[merge]
+    conflictstyle = zdiff3
+
+[diff]
+    colorMoved = default
+    algorithm = histogram
+
+[pull]
+    rebase = true
+
+[rebase]
+    autoStash = true
+
+[fetch]
+    prune = true
+
+[url "git@github.com:joaovpsant0s/"]
+    insteadOf = gh:joaovpsant0s/
+
+[include]
+    path = ~/.config/git/delta-theme.gitconfig
+
+[include]
+    path = ~/.config/git/config.local

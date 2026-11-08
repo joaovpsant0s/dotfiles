@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./theme.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bn-bg-alt, #16161e);
+      color: var(--bn-fg, #c0caf5);
+      font-family: "GeistMono Nerd Font", "Geist Mono", "JetBrains Mono", monospace;
+      font-size: 12px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--bn-border, #3b4261);
+      user-select: none;
+    }
+    .section { display: flex; align-items: center; gap: 12px; }
+    .brand {
+      color: var(--bn-accent, #bb9af7);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .sep { color: var(--bn-border, #3b4261); }
+    .pill {
+      background: var(--bn-surface, #24283b);
+      color: var(--bn-fg-muted, #a9b1d6);
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="section">
+    <span class="brand">🏛 BRASILIA-NIGHT // gama</span>
+    <span class="sep">│</span>
+    <span class="pill">UnB · FGA</span>
+  </div>
+  <div class="section">
+    <span id="clock" class="pill">--:--</span>
+  </div>
+  <script>
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent =
+        now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }) +
+        ' · ' +
+        now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+    updateClock();
+    setInterval(updateClock, 10000);
+  </script>
+</body>
+</html>

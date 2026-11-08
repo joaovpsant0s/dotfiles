@@ -1,0 +1,11 @@
+# =============================================================================
+# BRASILIA-NIGHT — LAZYGIT CONFIGURATION
+# =============================================================================
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+os:
+  editPreset: "nvim"
+notARepository: "skip"
+promptToReturnFromSubprocess: false

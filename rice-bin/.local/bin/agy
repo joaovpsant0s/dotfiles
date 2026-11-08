@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Wrapper seguro para Antigravity CLI (agy) entre WSL 2 e Windows
+set -euo pipefail
+
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLEAN_PATH="$(printf '%s' "$PATH" | awk -v RS=':' -v ORS=':' -v self="$SELF_DIR" '$0 != self && $0 != ""' | sed 's/:$//')"
+
+if sys_agy="$(PATH="$CLEAN_PATH" command -v agy 2>/dev/null)"; then
+  exec "$sys_agy" "$@"
+fi
+
+for candidate in \
+  "/mnt/c/Users/joaovpsantos/.gemini/antigravity-cli/bin/agy" \
+  "/mnt/c/Users/joaovpsantos/AppData/Local/agy/bin/agy.cmd"; do
+  if [ -x "$candidate" ]; then
+    exec "$candidate" "$@"
+  fi
+done
+
+echo "[ERROR] Antigravity CLI (agy) não localizado no PATH." >&2
+exit 127

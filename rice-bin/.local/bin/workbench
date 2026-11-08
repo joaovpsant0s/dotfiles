@@ -1,0 +1,387 @@
+#!/usr/bin/env bash
+# =============================================================================
+# BRASILIA-NIGHT — WORKBENCH (wb)
+# Orquestrador de sessões de desenvolvimento e monitoria de APC (UnB/FGA)
+# Layouts suportados: code | server | db | study | algo
+# Utilitários APC: init-algo | algo-check
+# =============================================================================
+set -euo pipefail
+
+LAYOUTS="code server db study algo"
+
+usage() {
+  cat << 'USAGE'
+╭────────────────────────────────────────────────────────────────────────╮
+│  BRASILIA-NIGHT — Workbench (wb) · Engenharia de Software & APC UnB    │
+╰────────────────────────────────────────────────────────────────────────╯
+Uso:
+  wb [layout] [diretório] [--dry-run]
+  wb init-algo [diretório]
+  wb algo-check <arquivo.c|arquivo.py> [input.txt] [expected.txt] [--yes]
+
+Layouts disponíveis:
+  code    Desenvolvimento convencional (editor + shell/testes + git)
+  server  Backend Python/Django, Docker Compose, Nginx e observabilidade de logs
+  db      PostgreSQL, SQLite, consultas SQL e análise de dados
+  study   Disciplinas UnB/FGA, anotações Markdown e compilação LaTeX
+  algo    Monitoria de APC (C com gcc -O2 -Wall -Wextra -std=c17 / Python + I/O)
+
+Comandos de Monitoria (APC):
+  wb init-algo [dir]
+      Prepara estrutura de exercício (main.c, solution.py, input.txt, expected.txt, Makefile)
+      sem sobrescrever arquivos existentes.
+  wb algo-check <fonte> [input.txt] [expected.txt] [--yes]
+      Compila (gcc -O2 -Wall -Wextra -std=c17) ou executa código Python com limite de
+      tempo (5s), compara com saída esperada e exibe diagnóstico detalhado.
+USAGE
+}
+
+check_windows_fs_guard() {
+  local target_dir="$1"
+  case "$target_dir" in
+    /mnt/[a-zA-Z]/*|/mnt/[a-zA-Z])
+      echo "[WARN] Guard WSL: '$target_dir' está em filesystem NTFS (/mnt/*)." >&2
+      echo "[WARN] Para desempenho ideal de I/O, Git e compilação, armazene projetos no ext4 (~)." >&2
+      ;;
+  esac
+}
+
+cmd_init_algo() {
+  local target_dir="${1:-$PWD}"
+  mkdir -p "$target_dir"
+  target_dir="$(cd "$target_dir" && pwd)"
+
+  if [ ! -f "$target_dir/main.c" ]; then
+    cat > "$target_dir/main.c" << 'CEOF'
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void) {
+    int a = 0, b = 0;
+    if (scanf("%d %d", &a, &b) != 2) {
+        return EXIT_FAILURE;
+    }
+    printf("%d\n", a + b);
+    return EXIT_SUCCESS;
+}
+CEOF
+    echo "[CREATED] $target_dir/main.c"
+  else
+    echo "[SKIP] $target_dir/main.c já existe"
+  fi
+
+  if [ ! -f "$target_dir/solution.py" ]; then
+    cat > "$target_dir/solution.py" << 'PYEOF'
+import sys
+
+
+def solve() -> None:
+    data = sys.stdin.read().split()
+    if len(data) < 2:
+        return
+    a, b = int(data[0]), int(data[1])
+    print(a + b)
+
+
+if __name__ == "__main__":
+    solve()
+PYEOF
+    echo "[CREATED] $target_dir/solution.py"
+  else
+    echo "[SKIP] $target_dir/solution.py já existe"
+  fi
+
+  if [ ! -f "$target_dir/input.txt" ]; then
+    printf "15 27\n" > "$target_dir/input.txt"
+    echo "[CREATED] $target_dir/input.txt"
+  fi
+
+  if [ ! -f "$target_dir/expected.txt" ]; then
+    printf "42\n" > "$target_dir/expected.txt"
+    echo "[CREATED] $target_dir/expected.txt"
+  fi
+
+  if [ ! -f "$target_dir/Makefile" ]; then
+    cat > "$target_dir/Makefile" << 'MK_EOF'
+CC      := gcc
+CFLAGS  := -O2 -Wall -Wextra -std=c17
+TARGET  := main
+
+.PHONY: all run test clean
+
+all: $(TARGET)
+
+$(TARGET): main.c
+	$(CC) $(CFLAGS) -o $(TARGET) main.c
+
+run: $(TARGET)
+	./$(TARGET) < input.txt
+
+test: $(TARGET)
+	wb algo-check main.c input.txt expected.txt --yes
+
+clean:
+	rm -f $(TARGET) actual.out
+MK_EOF
+    echo "[CREATED] $target_dir/Makefile"
+  fi
+
+  echo "[OK] Ambiente de exercício APC pronto em: $target_dir"
+}
+
+cmd_algo_check() {
+  local src_file=""
+  local input_file=""
+  local expected_file=""
+  local auto_yes=0
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --yes|-y)
+        auto_yes=1
+        shift
+        ;;
+      -*)
+        echo "[ERROR] Opção desconhecida para algo-check: $1" >&2
+        exit 2
+        ;;
+      *)
+        if [ -z "$src_file" ]; then
+          src_file="$1"
+        elif [ -z "$input_file" ]; then
+          input_file="$1"
+        elif [ -z "$expected_file" ]; then
+          expected_file="$1"
+        else
+          echo "[ERROR] Argumento extra inesperado: $1" >&2
+          exit 2
+        fi
+        shift
+        ;;
+    esac
+  done
+
+  if [ -z "$src_file" ] || [ ! -f "$src_file" ]; then
+    echo "[ERROR] Arquivo-fonte não encontrado: '${src_file:-}'" >&2
+    exit 2
+  fi
+
+  local src_dir
+  src_dir="$(cd "$(dirname "$src_file")" && pwd)"
+  input_file="${input_file:-$src_dir/input.txt}"
+  expected_file="${expected_file:-$src_dir/expected.txt}"
+
+  local file_hash
+  file_hash="$(sha256sum "$src_file" | awk '{print substr($1,1,16)}')"
+
+  echo "╭──────────────────── APC ALGO RUNNER (UnB/FGA) ────────────────────╮"
+  echo "  Arquivo-fonte : $src_file (sha256: $file_hash...)"
+  echo "  Entrada       : $input_file"
+  echo "  Saída esperada: $expected_file"
+  echo "╰───────────────────────────────────────────────────────────────────╯"
+
+  if [ "$auto_yes" -eq 0 ]; then
+    if [ -t 0 ]; then
+      printf "Confirmar compilação e execução local deste código? [s/N]: "
+      read -r reply
+      case "$reply" in
+        s|S|y|Y|sim|SIM|yes|YES) ;;
+        *)
+          echo "[ABORTED] Execução cancelada pelo usuário."
+          exit 0
+          ;;
+      esac
+    else
+      echo "[ERROR] Execução não-interativa requer a flag explícita '--yes' por segurança." >&2
+      exit 2
+    fi
+  fi
+
+  local tmp_dir
+  tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/bn_algo.XXXXXX")"
+  trap '[ -n "${tmp_dir:-}" ] && rm -rf "$tmp_dir"' RETURN EXIT
+
+  local actual_out="$tmp_dir/actual.txt"
+  local stderr_out="$tmp_dir/stderr.txt"
+  local run_cmd=()
+
+  case "$src_file" in
+    *.c)
+      local bin_out="$tmp_dir/solution_bin"
+      echo "[BUILD] gcc -O2 -Wall -Wextra -std=c17 \"$src_file\" -o \"$bin_out\" -lm"
+      gcc -O2 -Wall -Wextra -std=c17 "$src_file" -o "$bin_out" -lm
+      run_cmd=("$bin_out")
+      ;;
+    *.py)
+      echo "[RUN] python3 \"$src_file\""
+      run_cmd=(python3 "$src_file")
+      ;;
+    *)
+      echo "[ERROR] Extensão não suportada: '$src_file' (use .c ou .py)" >&2
+      exit 2
+      ;;
+  esac
+
+  local exit_code=0
+  if [ -f "$input_file" ]; then
+    timeout 5s "${run_cmd[@]}" < "$input_file" > "$actual_out" 2> "$stderr_out" || exit_code=$?
+  else
+    timeout 5s "${run_cmd[@]}" > "$actual_out" 2> "$stderr_out" || exit_code=$?
+  fi
+
+  if [ "$exit_code" -eq 124 ]; then
+    echo "[TLE] Tempo limite excedido (> 5s) — verifique possíveis loops infinitos." >&2
+    exit 124
+  elif [ "$exit_code" -ne 0 ]; then
+    echo "[RTE] Erro em tempo de execução (exit code = $exit_code):" >&2
+    cat "$stderr_out" >&2 || true
+    exit "$exit_code"
+  fi
+
+  if [ -s "$stderr_out" ]; then
+    echo "[STDERR]:"
+    cat "$stderr_out"
+  fi
+
+  if [ -f "$expected_file" ]; then
+    if diff -u --strip-trailing-cr "$expected_file" "$actual_out" > "$tmp_dir/diff.txt"; then
+      echo "[PASS] Saída idêntica ao esperado ($expected_file)."
+      return 0
+    else
+      echo "[FAIL] Diferença detectada entre esperado e obtido:"
+      cat "$tmp_dir/diff.txt"
+      return 1
+    fi
+  else
+    echo "[OUTPUT] (Nenhum arquivo expected.txt fornecido):"
+    cat "$actual_out"
+  fi
+}
+
+launch_layout() {
+  local layout="${1:-code}"
+  local target_dir="${2:-$PWD}"
+  local dry_run="${3:-0}"
+
+  if [ ! -d "$target_dir" ]; then
+    echo "[ERROR] Diretório não encontrado: $target_dir" >&2
+    exit 2
+  fi
+  target_dir="$(cd "$target_dir" && pwd)"
+  check_windows_fs_guard "$target_dir"
+
+  local base_name
+  base_name="$(basename "$target_dir" | tr '.: ' '---')"
+  local session_name="${layout}-${base_name}"
+
+  if [ "$dry_run" -eq 1 ] || ! command -v tmux >/dev/null 2>&1; then
+    if ! command -v tmux >/dev/null 2>&1 && [ "$dry_run" -eq 0 ]; then
+      echo "[WARN] tmux ainda não está instalado. Exibindo plano de sessão (modo dry-run):"
+    fi
+    echo "SESSION=$session_name"
+    echo "LAYOUT=$layout"
+    echo "WORKDIR=$target_dir"
+    case "$layout" in
+      code)
+        echo "WINDOWS=1:editor(nvim) 2:shell(zsh) 3:git(lazygit)"
+        ;;
+      server)
+        echo "WINDOWS=1:editor(nvim) 2:server-logs(docker/django) 3:ops(shell)"
+        ;;
+      db)
+        echo "WINDOWS=1:sql-editor(nvim) 2:db-cli(psql/sqlite3/lazysql) 3:data-shell(python)"
+        ;;
+      study)
+        echo "WINDOWS=1:notes(nvim) 2:latex-build(latexmk) 3:reference(shell)"
+        ;;
+      algo)
+        echo "WINDOWS=1:solution(nvim) 2:io-judge(wb algo-check) 3:debug-gdb(shell)"
+        ;;
+    esac
+    return 0
+  fi
+
+  if ! tmux has-session -t "=$session_name" 2>/dev/null; then
+    case "$layout" in
+      code)
+        tmux new-session -d -s "$session_name" -n "editor" -c "$target_dir"
+        tmux new-window -t "$session_name:2" -n "shell" -c "$target_dir"
+        tmux new-window -t "$session_name:3" -n "git" -c "$target_dir"
+        tmux select-window -t "$session_name:1"
+        ;;
+      server)
+        tmux new-session -d -s "$session_name" -n "editor" -c "$target_dir"
+        tmux new-window -t "$session_name:2" -n "server-logs" -c "$target_dir"
+        tmux split-window -h -t "$session_name:2" -c "$target_dir"
+        tmux new-window -t "$session_name:3" -n "ops" -c "$target_dir"
+        tmux select-window -t "$session_name:1"
+        ;;
+      db)
+        tmux new-session -d -s "$session_name" -n "sql-editor" -c "$target_dir"
+        tmux new-window -t "$session_name:2" -n "db-cli" -c "$target_dir"
+        tmux new-window -t "$session_name:3" -n "data-shell" -c "$target_dir"
+        tmux select-window -t "$session_name:1"
+        ;;
+      study)
+        tmux new-session -d -s "$session_name" -n "notes" -c "$target_dir"
+        tmux new-window -t "$session_name:2" -n "latex-build" -c "$target_dir"
+        tmux new-window -t "$session_name:3" -n "shell" -c "$target_dir"
+        tmux select-window -t "$session_name:1"
+        ;;
+      algo)
+        tmux new-session -d -s "$session_name" -n "solution" -c "$target_dir"
+        tmux split-window -h -p 38 -t "$session_name:1" -c "$target_dir"
+        tmux new-window -t "$session_name:2" -n "gdb-test" -c "$target_dir"
+        tmux select-window -t "$session_name:1"
+        tmux select-pane -t "$session_name:1.1"
+        ;;
+    esac
+  fi
+
+  if [ -n "${TMUX:-}" ]; then
+    tmux switch-client -t "$session_name"
+  else
+    tmux attach-session -t "$session_name"
+  fi
+}
+
+first_arg="${1:-code}"
+case "$first_arg" in
+  help|-h|--help)
+    usage
+    exit 0
+    ;;
+  init-algo|--init-algo)
+    shift
+    cmd_init_algo "${1:-$PWD}"
+    exit 0
+    ;;
+  algo-check|--algo-check)
+    shift
+    cmd_algo_check "$@"
+    exit 0
+    ;;
+esac
+
+layout="code"
+target_dir="$PWD"
+dry_run=0
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --dry-run|-n)
+      dry_run=1
+      shift
+      ;;
+    code|server|db|study|algo)
+      layout="$1"
+      shift
+      ;;
+    *)
+      target_dir="$1"
+      shift
+      ;;
+  esac
+done
+
+launch_layout "$layout" "$target_dir" "$dry_run"

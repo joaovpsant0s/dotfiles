@@ -1,0 +1,28 @@
+name: Release — Tag & Changelog Verification
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Validate & Publish Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12+
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate Theme Engine & Scripts
+        run: |
+          ./theme/validate.sh
+          ./tests/theme/test_theme_engine.sh
+          ./tests/shell/test_scripts.sh

@@ -1,0 +1,12 @@
+# Ferramentas Acadêmicas UnB/FGA (APC, LaTeX, Ciência de Dados & Documentação)
+texlive-basic
+texlive-latex
+texlive-latexrecommended
+texlive-latexextra
+texlive-fontsrecommended
+texlive-langportuguese
+texlive-binextra
+pandoc-cli
+gnuplot
+graphviz
+hyperfine

@@ -1,0 +1,7 @@
+# Segurança, Criptografia e Auditoria (core/extra)
+gnupg
+pass
+age
+sops
+gitleaks
+trivy
