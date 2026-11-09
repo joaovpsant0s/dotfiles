@@ -1,4 +1,4 @@
-# Engenharia de Performance e Benchmarks (`docs/PERFORMANCE.md`)
+# Desempenho e benchmarks (`docs/PERFORMANCE.md`)
 
 ## 1. Estratégias Implementadas
 

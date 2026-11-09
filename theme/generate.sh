@@ -122,7 +122,6 @@ tokens = {
     "HOSTNAME": persona["hostname"],
     "SIGNATURE": persona["signature"],
     "TAGLINE": persona["tagline"],
-    "PROFESSIONAL_ROLE": persona["professional_role"],
 }
 
 for i in range(16):

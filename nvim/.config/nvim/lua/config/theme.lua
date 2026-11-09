@@ -12,7 +12,6 @@ local default_theme = {
     hostname = "arch",
     signature = "arch",
     tagline = "i use arch, btw",
-    professional_role = "Software & Data Engineer",
   },
   colors = {
     background = "#1a1b26",

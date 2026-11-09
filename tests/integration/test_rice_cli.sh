@@ -40,22 +40,15 @@ grep -q "^RICE_THEME=night$" "$RICE_STATE_FILE"
 grep -q "^RICE_ACCENT=purple$" "$RICE_STATE_FILE"
 echo "[OK] Tema padrão restaurado."
 
-echo "=== [TEST] 4/5 Testando os 5 layouts do Workbench (code, server, db, study, algo) ==="
-for layout in code server db study algo; do
+echo "=== [TEST] 4/5 Testando os 4 layouts do Workbench (code, server, db, study) ==="
+for layout in code server db study; do
   OUT="$("$WB_BIN" "$layout" "$TMP_TEST" --dry-run)"
   grep -q "^LAYOUT=$layout$" <<< "$OUT"
 done
 "$SESH_BIN" --list >/dev/null
-echo "[OK] Todos os 5 layouts do Workbench e sesh-picker validados."
+echo "[OK] Todos os 4 layouts do Workbench e sesh-picker validados."
 
-echo "=== [TEST] 5/5 Testando Monitoria APC: 'wb init-algo' + 'wb algo-check' (C & Python) ==="
-ALGO_DIR="$TMP_TEST/apc_ex1"
-"$WB_BIN" init-algo "$ALGO_DIR" >/dev/null
-"$WB_BIN" algo-check "$ALGO_DIR/main.c" "$ALGO_DIR/input.txt" "$ALGO_DIR/expected.txt" --yes
-"$WB_BIN" algo-check "$ALGO_DIR/solution.py" "$ALGO_DIR/input.txt" "$ALGO_DIR/expected.txt" --yes
-echo "[OK] Compilação C (gcc -O2 -Wall -Wextra -std=c17) e execução Python 3 validadas com sucesso."
-
-echo "=== [TEST] 6/6 Validando Fastfetch em 120, 80, 79 e 60 colunas (com e sem TMUX) ==="
+echo "=== [TEST] 5/5 Validando Fastfetch em 120, 100, 99, 80, 79 e 60 colunas (com e sem TMUX) ==="
 FETCH_HOME="$TMP_TEST/fastfetch-home"
 mkdir -p "$FETCH_HOME/.config"
 ln -s "$REPO_ROOT/fastfetch/.config/fastfetch" "$FETCH_HOME/.config/fastfetch"
@@ -69,7 +62,7 @@ repo_root = sys.argv[1]
 ff_bin = f"{repo_root}/rice-bin/.local/bin/fastfetch"
 ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 
-for cols in (120, 80, 79, 60):
+for cols in (120, 100, 99, 80, 79, 60):
     for tmux_val in ("", "/tmp/tmux-1000/default,123,0"):
         env = os.environ.copy()
         env["HOME"] = sys.argv[2]
@@ -89,10 +82,10 @@ for cols in (120, 80, 79, 60):
         if max_len > cols:
             sys.exit(f"[FAIL] Largura visível ({max_len}) excedeu {cols} colunas (TMUX={bool(tmux_val)})!")
         joined = "\n".join(visible_lines)
-        if "i use arch, btw" not in joined:
-            sys.exit(f"[FAIL] 'i use arch, btw' ausente em {cols} colunas!")
+        if "Arch Linux" not in joined:
+            sys.exit(f"[FAIL] Título do sistema ausente em {cols} colunas.")
         wide = cols >= 80
-        if ("▟" in joined) != wide:
+        if ("▟" in joined) != (80 <= cols < 100) or ("ooossss" in joined) != (cols >= 100):
             sys.exit(f"[FAIL] Logo inesperado em {cols} colunas.")
         for label in ("cpu", "disk", "pkgs"):
             if bool(re.search(rf"\b{label} {{2,}}", joined)) != wide:

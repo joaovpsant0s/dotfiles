@@ -4,8 +4,8 @@
         "type": "file",
         "source": "~/.config/fastfetch/logo-windows.txt",
         "color": {
-            "1": "{{ACCENT_PURPLE}}",
-            "2": "{{ACCENT_BLUE}}"
+            "1": "{{ACCENT_BLUE}}",
+            "2": "{{ACCENT_CYAN}}"
         },
         "padding": {
             "top": 1,
@@ -16,16 +16,16 @@
     "display": {
         "separator": "  ",
         "color": {
-            "keys": "{{ACCENT_PURPLE}}",
-            "title": "{{ACCENT_PURPLE}}",
+            "keys": "{{ACCENT_BLUE}}",
+            "title": "{{ACCENT_BLUE}}",
             "output": "{{FOREGROUND}}"
         }
     },
     "modules": [
         {
             "type": "custom",
-            "format": "nocturne  /  host",
-            "outputColor": "{{ACCENT_PURPLE}}"
+            "format": "Windows",
+            "outputColor": "{{ACCENT_CYAN}}"
         },
         "break",
         {

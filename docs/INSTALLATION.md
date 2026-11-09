@@ -26,7 +26,7 @@ make install-packages
 # Ou por categoria específica:
 ./scripts/install-packages.sh --category base
 ./scripts/install-packages.sh --category dev
-./scripts/install-packages.sh --category academic
+./scripts/install-packages.sh --category docs
 ```
 
 ## 3. Reversão Completa (Rollback)

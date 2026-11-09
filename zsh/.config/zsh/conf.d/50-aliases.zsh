@@ -1,4 +1,4 @@
-# 50-aliases.zsh — Aliases de Engenharia de Software, Dados, Containers e WSL Interop
+# 50-aliases.zsh — Aliases para shell, Git, containers e WSL
 if (( $+commands[eza] )); then
   alias ls='eza --group-directories-first --icons=auto'
   alias ll='eza -lh --group-directories-first --icons=auto --git'
@@ -21,9 +21,6 @@ alias fff='fastfetch --full'
 # C17 & Algorithms
 alias gcc17='gcc -O2 -Wall -Wextra -std=c17'
 alias gccdbg='gcc -g3 -O0 -Wall -Wextra -fsanitize=address,undefined -std=c17'
-alias algoinit='wb init-algo'
-alias algocheck='wb algo-check'
-alias wbalgo='wb algo'
 alias wbdb='wb db'
 alias wbserver='wb server'
 

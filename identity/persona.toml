@@ -9,26 +9,3 @@ github_username = "joaovpsant0s"
 hostname = "arch"
 signature = "arch"
 tagline = "i use arch, btw"
-professional_role = "Software & Data Engineer"
-
-primary_languages = [
-    "Python",
-    "SQL",
-    "C",
-    "Rust",
-    "Go",
-    "TypeScript",
-    "Java",
-    "Bash",
-    "Lua",
-]
-
-technical_focus = [
-    "Systems Architecture",
-    "Backend Engineering",
-    "Data Engineering",
-    "Database Systems",
-    "Linux Systems",
-    "DevOps & Containers",
-    "Algorithms & High Performance",
-]

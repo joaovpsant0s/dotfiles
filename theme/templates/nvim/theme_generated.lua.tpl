@@ -13,7 +13,6 @@ return {
     hostname = "{{HOSTNAME}}",
     signature = "{{SIGNATURE}}",
     tagline = "{{TAGLINE}}",
-    professional_role = "{{PROFESSIONAL_ROLE}}",
   },
   colors = {
     background = "{{BACKGROUND}}",

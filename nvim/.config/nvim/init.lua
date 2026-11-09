@@ -17,7 +17,6 @@ require("config.diagnostics")
 require("config.keymaps")
 require("config.autocmds")
 require("config.lsp")
-require("util.apc").setup()
 
 -- Bootstrap lazy.nvim safely (only when network/git is available or already installed)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

@@ -13,7 +13,7 @@
     "modules": [
         {
             "type": "custom",
-            "format": "nocturne / {{SIGNATURE}}",
+            "format": "Arch Linux",
             "outputColor": "{{ACCENT_BLUE}}"
         },
         {
@@ -34,12 +34,6 @@
         {
             "type": "uptime",
             "key": "up   "
-        },
-        "break",
-        {
-            "type": "custom",
-            "format": "{{TAGLINE}}",
-            "outputColor": "{{FOREGROUND_MUTED}}"
         }
     ]
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # NOCTURNE — RESPONSIVE FASTFETCH WRAPPER
-# - Sem argumentos: seleciona config.jsonc (>=80 cols) ou compact.jsonc (<80 cols)
+# - Sem argumentos: seleciona logo grande (>=100 cols), médio (>=80) ou resumo (<80)
 # - --full / --diag: abre o preset completo diagnostic.jsonc
 # - Qualquer outra flag: repassa diretamente para /usr/bin/fastfetch
 # =============================================================================
@@ -58,6 +58,8 @@ fi
 # Fallback when NOCTURNE_ASCII=1 or TERM=linux/dumb
 if [ "${NOCTURNE_ASCII:-0}" = "1" ] || [ "${TERM:-}" = "linux" ] || [ "${TERM:-}" = "dumb" ] || [ "$COLS" -lt 80 ]; then
   exec "$SYS_FF" --config "$CFG_DIR/compact.jsonc"
+elif [ "$COLS" -ge 100 ]; then
+  exec "$SYS_FF" --config "$CFG_DIR/config.jsonc" --logo-type builtin --logo arch --logo-padding-top 0
 else
   exec "$SYS_FF" --config "$CFG_DIR/config.jsonc"
 fi

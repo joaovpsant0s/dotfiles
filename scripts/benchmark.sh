@@ -55,7 +55,7 @@ print("│  NOCTURNE — BENCHMARK REAL DE INICIALIZAÇÃO E ENGINE             
 print("╰───────────────────────────────────────────────────────────────────────────────────────────────╯")
 
 bench_cmd("theme/generate.sh (idempotent)", [f"{repo_root}/theme/generate.sh", "--quiet"], n=runs)
-bench_cmd("wb algo --dry-run", [f"{repo_root}/rice-bin/.local/bin/wb", "algo", "--dry-run"], n=runs)
+bench_cmd("wb code --dry-run", [f"{repo_root}/rice-bin/.local/bin/wb", "code", "--dry-run"], n=runs)
 bench_cmd("bash -i -c exit", ["bash", "-i", "-c", "exit"], n=runs)
 
 if shutil.which("zsh"):

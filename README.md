@@ -21,7 +21,7 @@
 
 ## 1. Visão Geral
 
-**`nocturne`** é uma plataforma de engenharia de ambiente de desenvolvimento para **Arch Linux no WSL 2** integrada ao **Windows 11**, construída com foco em desempenho, reprodutibilidade e consistência visual:
+**`nocturne`** é uma configuração de terminal e ferramentas para **Arch Linux no WSL 2** integrada ao **Windows 11**, construída com foco em desempenho, reprodutibilidade e consistência visual:
 
 - **Ecossistema `glibc` completo do Arch Linux (`pacman` + `yay`)**: compiladores, Language Servers, formatadores e ferramentas TUI nativas sem gambiarras de compatibilidade.
 - **Single Source of Truth Theme Engine (`theme/palette.toml` + `theme/generate.sh`)**: 3 variantes (`night`, `storm`, `moon`) × 6 acentos (`blue`, `purple`, `cyan`, `green`, `orange`, `red`) = **18 temas gerados atomicamente** para 18 destinos (Windows Terminal, WezTerm, PowerShell, Zsh, Bash, Starship, Tmux, Neovim, Yazi, Btop, Lazygit, Lazydocker, Delta, Fastfetch, GlazeWM e Zebar).
@@ -37,11 +37,11 @@
 
 A paleta Night usa azul quase preto, texto claro e lavanda como acento. O Arch e o PowerShell têm marcas próprias em azul e lilás. O Windows Terminal prefere **GeistMono Nerd Font Mono**, com JetBrainsMono Nerd Font Mono e Cascadia Mono como alternativas.
 
-No Neovim, abra `nvim` para ver o painel do Snacks. Use **f** para buscar, **r** para recentes, **p** para projetos e **g** para Git. O seletor alterna entre prévia lateral e empilhada conforme a largura.
+No Neovim, abra `nvim` para ver o painel do Snacks. Use **f** para arquivos, **n** para novo arquivo, **g** para buscar texto, **r** para recentes e **c** para a configuração. Durante a edição, use **Espaço → e** para abrir o explorador. O seletor alterna entre prévia lateral e empilhada conforme a largura.
 
 ### Fastfetch
 
-- `fastfetch` — painel responsivo. O preset curto cabe em splits.
+- `fastfetch` — painel responsivo. Logo grande a partir de 100 colunas, médio a partir de 80 e resumo em splits.
 - `fastfetch --compact` — sistema, shell, memória e uptime.
 - `fastfetch --full` — diagnóstico com kernel, terminal, GPUs e outros dados.
 - No Windows, a marca em quatro painéis identifica o host. A RAM e o build são os do Windows.
@@ -53,7 +53,7 @@ Use `~/dev` ou `~/projects` para projetos no filesystem do Arch. O seletor de se
 
 1. Abra **Arch · WSL** no Windows Terminal e rode `wb code ~/dev/meu-projeto`. A primeira janela abre o Neovim, a segunda é o shell e a terceira abre o Lazygit quando o diretório está em um repositório Git.
 2. No tmux, use `Ctrl+a` seguido de `s` para trocar de sessão, `y` para Yazi, `g` para Lazygit ou `b` para btop. Fora do tmux, a função `y` acompanha o último diretório escolhido no Yazi.
-3. Use `wb study` para notas com Neovim e `wb algo` para exercícios. Use `explorer.exe .` quando quiser abrir a pasta atual no Windows.
+3. Use `wb study` para notas com Neovim. Use `explorer.exe .` quando quiser abrir a pasta atual no Windows.
 
 ### Prompt Unificado (Arch WSL & Windows PowerShell)
 ```text
@@ -86,10 +86,7 @@ rice benchmark          # Mede cold, warm, média, mediana e P95 reais
 # Workbench (Tmux + C17/Python Algorithms Runner):
 wb code                 # Layout de desenvolvimento (editor + shell + git)
 wb server               # Layout Backend/Containers
-wb db                   # Layout SQL/Data Engineering
-wb algo                 # Layout de algoritmos + compilador C17/Python
-wb init-algo ./ex1      # Gera main.c, solution.py, input.txt, expected.txt, Makefile
-wb algo-check main.c    # Compila com gcc -O2 -Wall -Wextra -std=c17 e valida I/O
+wb db                   # Layout SQL
 ```
 
 ---

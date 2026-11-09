@@ -43,17 +43,11 @@ required_persona_str = [
     "hostname",
     "signature",
     "tagline",
-    "professional_role",
 ]
 for key in required_persona_str:
     val = persona.get(key)
     if not isinstance(val, str) or not val.strip():
         sys.exit(f"[ERROR] identity/persona.toml: campo obrigatório inválido ou vazio: '{key}'")
-
-for list_key in ("primary_languages", "technical_focus"):
-    val = persona.get(list_key)
-    if not isinstance(val, list) or not val or not all(isinstance(x, str) and x.strip() for x in val):
-        sys.exit(f"[ERROR] identity/persona.toml: lista obrigatória inválida: '{list_key}'")
 
 raw_persona = persona_path.read_text(encoding="utf-8")
 if re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", raw_persona):

@@ -3,7 +3,7 @@ _wb_completions() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   if [ "$COMP_CWORD" -eq 1 ]; then
-    COMPREPLY=( $(compgen -W "code server db study algo init-algo algo-check help" -- "$cur") )
+    COMPREPLY=( $(compgen -W "code server db study help" -- "$cur") )
   fi
 }
 complete -F _wb_completions wb workbench

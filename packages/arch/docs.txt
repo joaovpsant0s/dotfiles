@@ -1,4 +1,4 @@
-# Ferramentas de Documentação, LaTeX, Benchmark Ferramentas Acadêmicas Ciência de Dados ( LaTeX, Ciência de Dados & Documentação)
+# Ferramentas de documentação, LaTeX e benchmarks
 texlive-basic
 texlive-latex
 texlive-latexrecommended

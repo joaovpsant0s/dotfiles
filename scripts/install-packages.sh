@@ -26,7 +26,7 @@ while [ $# -gt 0 ]; do
       shift 2
       ;;
     -h|--help)
-      echo "Uso: install-packages.sh [--dry-run] [--category base|dev|tui|security|academic|aur|all]"
+      echo "Uso: install-packages.sh [--dry-run] [--category base|dev|tui|security|docs|aur|all]"
       exit 0
       ;;
     *)
@@ -53,10 +53,10 @@ RUN_AUR=0
 
 case "$CATEGORY" in
   all)
-    OFFICIAL_CATS=(base dev tui security academic)
+    OFFICIAL_CATS=(base dev tui security docs)
     RUN_AUR=1
     ;;
-  base|dev|tui|security|academic)
+  base|dev|tui|security|docs)
     OFFICIAL_CATS=("$CATEGORY")
     ;;
   aur)

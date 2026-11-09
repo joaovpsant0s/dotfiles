@@ -33,7 +33,6 @@
         { "type": "gpu", "key": "gpu     " },
         { "type": "memory", "key": "mem     " },
         { "type": "disk", "key": "disk    ", "folders": "/" },
-        { "type": "uptime", "key": "up      " },
-        { "type": "custom", "key": "rice    ", "format": "nocturne ({{VARIANT}}:{{ACCENT_NAME}})" }
+        { "type": "uptime", "key": "up      " }
     ]
 }

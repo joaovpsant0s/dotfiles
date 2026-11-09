@@ -14,7 +14,7 @@
   - `orange` (`#ff9e64`)
   - `red` (`#f7768e`)
 
-## 2. Regras de Engenharia
+## 2. Regras dos temas
 
 1. **Zero Hex Hardcoded nos Templates**: Todos os arquivos `.tpl` em `theme/templates/` usam exclusivamente placeholders `{{TOKEN}}`. O script `theme/validate.sh` falha imediatamente caso encontre qualquer literal `#[0-9a-fA-F]{6}` em um template.
 2. **Escrita Atômica por Hash SHA-256**: `theme/generate.sh` calcula o hash SHA-256 do conteúdo renderizado e só substitui o arquivo de destino (via `mktemp` + `os.replace`) quando o conteúdo efetivamente mudou.
