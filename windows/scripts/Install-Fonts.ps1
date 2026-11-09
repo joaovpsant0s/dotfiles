@@ -37,7 +37,7 @@ $FontTargets = @(
     }
 )
 
-Write-Host "=== BRASILIA-NIGHT — AUDITORIA & INSTALAÇÃO DE FONTES ===" -ForegroundColor Cyan
+Write-Host "=== NOCTURNE — AUDITORIA & INSTALAÇÃO DE FONTES ===" -ForegroundColor Cyan
 
 foreach ($font in $FontTargets) {
     $installedNerd = @()

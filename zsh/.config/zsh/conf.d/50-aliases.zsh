@@ -1,4 +1,4 @@
-# 50-aliases.zsh — Aliases para Engenharia de Software, Dados e Monitoria de APC (UnB/FGA)
+# 50-aliases.zsh — Aliases de Engenharia de Software, Dados, Containers e WSL Interop
 if (( $+commands[eza] )); then
   alias ls='eza --group-directories-first --icons=auto'
   alias ll='eza -lh --group-directories-first --icons=auto --git'
@@ -15,20 +15,26 @@ fi
 (( $+commands[lazydocker] )) && alias lzd='lazydocker'
 (( $+commands[btop] )) && alias top='btop'
 (( $+commands[nvim] )) && alias v='nvim'
+alias ff='fastfetch'
+alias fff='fastfetch --full'
 
-# Monitoria de Algoritmos e Programação em Computadores (APC - UnB/FGA)
+# C17 & Algorithms
 alias gcc17='gcc -O2 -Wall -Wextra -std=c17'
 alias gccdbg='gcc -g3 -O0 -Wall -Wextra -fsanitize=address,undefined -std=c17'
-alias apcinit='wb init-algo'
-alias apccheck='wb algo-check'
+alias algoinit='wb init-algo'
+alias algocheck='wb algo-check'
 alias wbalgo='wb algo'
-alias wbstudy='wb study'
 alias wbdb='wb db'
 alias wbserver='wb server'
 
-# Backend & Data Engineering
+# Backend, Data & Git
 alias py='python3'
 alias dc='docker compose'
 alias gs='git status -sb'
 alias gd='git diff'
 alias gl='git log --oneline --graph --decorate -n 20'
+
+# Windows Interop Helpers
+alias pbcopy='clip.exe'
+alias pbpaste='powershell.exe -NoProfile -Command Get-Clipboard | tr -d "\r"'
+alias open='explorer.exe'

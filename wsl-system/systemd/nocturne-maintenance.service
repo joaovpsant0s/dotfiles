@@ -1,0 +1,7 @@
+[Unit]
+Description=Nocturne User Cache & State Maintenance
+Documentation=https://github.com/joaovpsant0s/dotfiles
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/find %h/.cache/zsh -type f -mtime +30 -delete

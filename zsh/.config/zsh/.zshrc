@@ -1,10 +1,10 @@
 # =============================================================================
-# BRASILIA-NIGHT — INTERACTIVE ZSHRC
+# NOCTURNE — INTERACTIVE ZSHRC
 # =============================================================================
 [[ -o interactive ]] || return 0
 
-mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/init" \
-         "${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+[[ -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/init" ]] || mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/init"
+[[ -d "${XDG_STATE_HOME:-$HOME/.local/state}/zsh" ]] || mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
 
 HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
 HISTSIZE=50000

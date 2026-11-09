@@ -13,6 +13,6 @@
       "if __name__ == \"__main__\":",
       "    solve()"
     ],
-    "description": "Template Python fast I/O para exercícios de APC (UnB/FGA)"
+    "description": "Template Python fast I/O para exercícios de APC"
   }
 }

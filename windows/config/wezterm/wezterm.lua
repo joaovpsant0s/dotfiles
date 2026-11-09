@@ -1,5 +1,5 @@
 -- =============================================================================
--- BRASILIA-NIGHT — WEZTERM CONFIGURATION (Windows 11 Host -> Arch WSL 2)
+-- NOCTURNE — WEZTERM CONFIGURATION (Windows 11 Host -> Arch WSL 2)
 -- =============================================================================
 local wezterm = require("wezterm")
 local act = wezterm.action
@@ -20,14 +20,14 @@ config.font_size = 11.5
 config.line_height = 1.12
 config.harfbuzz_features = { "calt=1", "clig=1", "liga=1" }
 
--- Theme: generated brasilia-night TOML in ./colors/brasilia-night.toml (fallback: Tokyo Night)
+-- Theme: generated nocturne TOML in ./colors/nocturne.toml (fallback: Tokyo Night)
 local config_dir = wezterm.config_dir or ""
-local theme_file = config_dir .. "/colors/brasilia-night.toml"
+local theme_file = config_dir .. "/colors/nocturne.toml"
 local f = io.open(theme_file, "r")
 if f then
   f:close()
   config.color_scheme_dirs = { config_dir .. "/colors" }
-  config.color_scheme = "brasilia-night"
+  config.color_scheme = "nocturne"
 else
   config.color_scheme = "Tokyo Night"
 end

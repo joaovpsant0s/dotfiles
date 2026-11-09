@@ -1,5 +1,5 @@
-# 40-init-cache.zsh — Cache de scripts de init (starship, zoxide, atuin) com invalidação
-__bn_cached_eval() {
+# 40-init-cache.zsh — Cache de scripts de init (starship, zoxide, atuin, direnv) com invalidação
+__nocturne_cached_eval() {
   local name="$1"
   local bin_path="$2"
   local cfg_path="$3"
@@ -26,9 +26,13 @@ __bn_cached_eval() {
 }
 
 if (( $+commands[zoxide] )); then
-  __bn_cached_eval "zoxide" "$commands[zoxide]" "" zoxide init zsh
+  __nocturne_cached_eval "zoxide" "$commands[zoxide]" "" zoxide init zsh
 fi
 
 if (( $+commands[atuin] )); then
-  __bn_cached_eval "atuin" "$commands[atuin]" "$XDG_CONFIG_HOME/atuin/config.toml" atuin init zsh --disable-up-arrow
+  __nocturne_cached_eval "atuin" "$commands[atuin]" "$XDG_CONFIG_HOME/atuin/config.toml" atuin init zsh --disable-up-arrow
+fi
+
+if (( $+commands[direnv] )); then
+  __nocturne_cached_eval "direnv" "$commands[direnv]" "" direnv hook zsh
 fi

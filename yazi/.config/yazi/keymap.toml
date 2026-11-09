@@ -3,5 +3,5 @@
 [mgr]
 prepend_keymap = [
   { on = ["<C-s>"], run = 'shell "$SHELL" --block --confirm', desc = "Abrir shell no diretório atual" },
-  { on = ["g", "b"], run = "cd ~/brasilia-night", desc = "Ir para brasilia-night" },
+  { on = ["g", "b"], run = "cd ~/nocturne", desc = "Ir para nocturne" },
 ]

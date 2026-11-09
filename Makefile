@@ -6,9 +6,9 @@ ACCENT  ?= purple
 
 .PHONY: help validate theme install unstow backup install-packages dry-run-packages doctor benchmark test sync-windows
 
-help: ## Exibe os alvos disponíveis no brasilia-night
+help: ## Exibe os alvos disponíveis no nocturne
 	@echo "╭──────────────────────────────────────────────────────────────────╮"
-	@echo "│  BRASILIA-NIGHT v2.0 — Makefile Platform Interface               │"
+	@echo "│  NOCTURNE v2.0 — Makefile Platform Interface               │"
 	@echo "╰──────────────────────────────────────────────────────────────────╯"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[35m%-18s\033[0m %s\n", $$1, $$2}'
 

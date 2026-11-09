@@ -1,4 +1,4 @@
-# Ferramentas Acadêmicas UnB/FGA (APC, LaTeX, Ciência de Dados & Documentação)
+# Ferramentas de Documentação, LaTeX, Benchmark Ferramentas Acadêmicas Ciência de Dados ( LaTeX, Ciência de Dados & Documentação)
 texlive-basic
 texlive-latex
 texlive-latexrecommended

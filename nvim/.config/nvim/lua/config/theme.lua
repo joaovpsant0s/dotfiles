@@ -1,7 +1,3 @@
--- =============================================================================
--- BRASILIA-NIGHT — THEME STATE LOADER (With Safe Fallback)
--- Garante funcionamento mesmo antes da primeira execução de theme/generate.sh
--- =============================================================================
 local M = {}
 
 local default_theme = {
@@ -12,9 +8,11 @@ local default_theme = {
     owner_name = "João Victor Pereira Santos",
     display_name = "João Victor",
     username = "JVZerinho",
-    hostname = "gama",
-    academic_affiliation = "Universidade de Brasília (UnB) - Faculdade do Gama (FGA)",
-    professional_role = "Estudante de Engenharia de Software e Monitor de APC",
+    github_username = "joaovpsant0s",
+    hostname = "arch",
+    signature = "arch",
+    tagline = "i use arch, btw",
+    professional_role = "Software & Data Engineer",
   },
   colors = {
     background = "#1a1b26",
@@ -25,6 +23,8 @@ local default_theme = {
     foreground_muted = "#a9b1d6",
     foreground_subtle = "#565f89",
     accent = "#bb9af7",
+    accent_blue = "#7aa2f7",
+    accent_purple = "#bb9af7",
     accent_secondary = "#7aa2f7",
     border = "#3b4261",
     selection = "#283457",
@@ -43,5 +43,5 @@ else
   M.current = default_theme
 end
 
-vim.g.brasilia_night_theme = M.current
+vim.g.nocturne_theme = M.current
 return M

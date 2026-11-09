@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — REVERSIBLE DOTFILES BACKUP & RESTORE GENERATOR
+# NOCTURNE — REVERSIBLE DOTFILES BACKUP & RESTORE GENERATOR
 # Cria snapshot com manifesto SHA-256 e script restore.sh antes de alterações
 # =============================================================================
 set -euo pipefail
 
 TARGET_HOME="${1:-$HOME}"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
-BACKUP_BASE="${XDG_STATE_HOME:-$TARGET_HOME/.local/state}/brasilia-night/backups"
+BACKUP_BASE="${XDG_STATE_HOME:-$TARGET_HOME/.local/state}/nocturne/backups"
 BACKUP_DIR="$BACKUP_BASE/$TIMESTAMP"
 
 PATHS_TO_CHECK=(
@@ -51,7 +51,7 @@ done
 cat > "$BACKUP_DIR/restore.sh" << RESTORE_EOF
 #!/usr/bin/env bash
 set -euo pipefail
-echo "Restaurando backup brasilia-night ($TIMESTAMP) para $TARGET_HOME..."
+echo "Restaurando backup nocturne ($TIMESTAMP) para $TARGET_HOME..."
 if [ -d "$BACKUP_DIR/files" ]; then
   cp -a "$BACKUP_DIR/files/." "$TARGET_HOME/"
 fi

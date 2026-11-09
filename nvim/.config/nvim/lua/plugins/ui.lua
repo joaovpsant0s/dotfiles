@@ -17,7 +17,7 @@ return {
           lualine_c = { { "filename", path = 1 } },
           lualine_x = {
             function()
-              return "🏛 " .. (theme.variant or "night") .. ":" .. (theme.accent_name or "purple")
+              return "▲ " .. (theme.variant or "night") .. ":" .. (theme.accent_name or "purple")
             end,
             "encoding",
             "filetype",

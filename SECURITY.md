@@ -1,4 +1,4 @@
-# Política de Segurança — `brasilia-night`
+# Política de Segurança — `nocturne`
 
 ## Princípios de Segurança
 

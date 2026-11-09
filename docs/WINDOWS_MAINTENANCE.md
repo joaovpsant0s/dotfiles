@@ -4,7 +4,7 @@
 
 Execute o script de diagnóstico no PowerShell 7:
 ```powershell
-pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\brasilia-night\windows\scripts\Invoke-WorkstationMaintenance.ps1
+pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\nocturne\windows\scripts\Invoke-WorkstationMaintenance.ps1
 ```
 
 O script verifica:

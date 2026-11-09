@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# =============================================================================
+# NOCTURNE — ARCH LINUX WSL 2 MAINTENANCE & ZSH BYTECODE COMPILER
+# =============================================================================
+set -euo pipefail
+
+echo "╭──────────────────────────────────────────────────────────────────╮"
+echo "│  ▲ NOCTURNE — ARCH LINUX MAINTENANCE & OPTIMIZATION              │"
+echo "╰──────────────────────────────────────────────────────────────────╯"
+
+if command -v zsh >/dev/null 2>&1; then
+  zsh -i -c 'exit' >/dev/null 2>&1 || true
+  zsh -c '
+    for f in "$HOME/.zshenv" "$HOME/.config/zsh/.zshrc" "$HOME/.config/zsh/conf.d/"*.zsh(N) "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/init/"*.zsh(N) "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"*(N); do
+      if [[ -f "$f" && "$f" != *.zwc ]]; then
+        zcompile "$f" 2>/dev/null || true
+      fi
+    done
+  '
+  echo "[OK] Bytecode Zsh (.zwc) atualizado para módulos, caches de init e zcompdump."
+fi
+
+mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+find "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" -type f -mtime +30 -delete 2>/dev/null || true
+echo "[OK] Caches temporários de shell verificados."
+
+orphans="$(pacman -Qdtq 2>/dev/null | tr '\n' ' ' || true)"
+if [ -n "$orphans" ]; then
+  echo "[INFO] Pacotes órfãos detectados: $orphans"
+else
+  echo "[OK] Nenhum pacote órfão no Pacman."
+fi
+
+echo "[OK] Manutenção concluída."

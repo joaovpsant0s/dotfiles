@@ -1,0 +1,23 @@
+{
+    "name": "Nocturne",
+    "background": "{{BACKGROUND}}",
+    "foreground": "{{FOREGROUND}}",
+    "cursorColor": "{{ACCENT}}",
+    "selectionBackground": "{{SELECTION}}",
+    "black": "{{ANSI_0}}",
+    "red": "{{ANSI_1}}",
+    "green": "{{ANSI_2}}",
+    "yellow": "{{ANSI_3}}",
+    "blue": "{{ANSI_4}}",
+    "purple": "{{ANSI_5}}",
+    "cyan": "{{ANSI_6}}",
+    "white": "{{ANSI_7}}",
+    "brightBlack": "{{ANSI_8}}",
+    "brightRed": "{{ANSI_9}}",
+    "brightGreen": "{{ANSI_10}}",
+    "brightYellow": "{{ANSI_11}}",
+    "brightBlue": "{{ANSI_12}}",
+    "brightPurple": "{{ANSI_13}}",
+    "brightCyan": "{{ANSI_14}}",
+    "brightWhite": "{{ANSI_15}}"
+}

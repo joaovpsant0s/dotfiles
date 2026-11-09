@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — WORKBENCH (wb)
-# Orquestrador de sessões de desenvolvimento e monitoria de APC (UnB/FGA)
+# NOCTURNE — WORKBENCH (wb)
+# Orquestrador de sessões de desenvolvimento e monitoria de APC
 # Layouts suportados: code | server | db | study | algo
 # Utilitários APC: init-algo | algo-check
 # =============================================================================
@@ -12,7 +12,7 @@ LAYOUTS="code server db study algo"
 usage() {
   cat << 'USAGE'
 ╭────────────────────────────────────────────────────────────────────────╮
-│  BRASILIA-NIGHT — Workbench (wb) · Engenharia de Software & APC UnB    │
+│  NOCTURNE — Workbench (wb)    │
 ╰────────────────────────────────────────────────────────────────────────╯
 Uso:
   wb [layout] [diretório] [--dry-run]
@@ -23,10 +23,10 @@ Layouts disponíveis:
   code    Desenvolvimento convencional (editor + shell/testes + git)
   server  Backend Python/Django, Docker Compose, Nginx e observabilidade de logs
   db      PostgreSQL, SQLite, consultas SQL e análise de dados
-  study   Disciplinas UnB/FGA, anotações Markdown e compilação LaTeX
-  algo    Monitoria de APC (C com gcc -O2 -Wall -Wextra -std=c17 / Python + I/O)
+  study   Disciplinas Software Engineering, anotações Markdown e compilação LaTeX
+  algo    Algorithms Monitoria de APC C17/Python Judge (C com gcc -O2 -Wall -Wextra -std=c17 / Python + I/O)
 
-Comandos de Monitoria (APC):
+Comandos de Algorithms Runner:
   wb init-algo [dir]
       Prepara estrutura de exercício (main.c, solution.py, input.txt, expected.txt, Makefile)
       sem sobrescrever arquivos existentes.
@@ -174,7 +174,7 @@ cmd_algo_check() {
   local file_hash
   file_hash="$(sha256sum "$src_file" | awk '{print substr($1,1,16)}')"
 
-  echo "╭──────────────────── APC ALGO RUNNER (UnB/FGA) ────────────────────╮"
+  echo "╭──────────────────── APC ALGO RUNNER ────────────────────╮"
   echo "  Arquivo-fonte : $src_file (sha256: $file_hash...)"
   echo "  Entrada       : $input_file"
   echo "  Saída esperada: $expected_file"

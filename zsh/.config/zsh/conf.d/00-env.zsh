@@ -11,13 +11,13 @@ else
 fi
 
 export PAGER="less -FRX"
-export BAT_CONFIG_PATH="$BRASILIA_NIGHT_ROOT/theme/generated/bat/config"
+export BAT_CONFIG_PATH="$NOCTURNE_ROOT/theme/generated/bat/config"
 
-if [ -f "$BRASILIA_NIGHT_ROOT/theme/generated/fzf/fzf-theme.sh" ]; then
-  source "$BRASILIA_NIGHT_ROOT/theme/generated/fzf/fzf-theme.sh"
+if [ -f "$NOCTURNE_ROOT/theme/generated/fzf/fzf-theme.sh" ]; then
+  source "$NOCTURNE_ROOT/theme/generated/fzf/fzf-theme.sh"
 fi
 export FZF_DEFAULT_OPTS="--height=45% --layout=reverse --border=rounded ${FZF_DEFAULT_OPTS_THEME:-}"
 
-if [ -f "$BRASILIA_NIGHT_ROOT/theme/generated/eza/eza-colors.sh" ]; then
-  source "$BRASILIA_NIGHT_ROOT/theme/generated/eza/eza-colors.sh"
+if [ -f "$NOCTURNE_ROOT/theme/generated/eza/eza-colors.sh" ]; then
+  source "$NOCTURNE_ROOT/theme/generated/eza/eza-colors.sh"
 fi

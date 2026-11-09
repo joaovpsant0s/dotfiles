@@ -1,5 +1,5 @@
 # =============================================================================
-# BRASILIA-NIGHT — MODULAR GIT CONFIGURATION
+# NOCTURNE — MODULAR GIT CONFIGURATION
 # =============================================================================
 [user]
     name = João Victor Pereira Santos
@@ -17,7 +17,7 @@
 
 [delta]
     navigate = true
-    features = brasilia-night
+    features = nocturne
 
 [merge]
     conflictstyle = zdiff3

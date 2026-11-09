@@ -1,4 +1,4 @@
-# BRASILIA-NIGHT — Zsh Plugins (Antidote static bundle)
+# NOCTURNE — Zsh Plugins (Antidote static bundle)
 zsh-users/zsh-completions kind:fpath path:src
 zsh-users/zsh-autosuggestions
 zdharma-continuum/fast-syntax-highlighting kind:defer

@@ -6,23 +6,23 @@ No PowerShell 7 (sem necessidade de privilégios de Administrador):
 
 ```powershell
 # Apenas verificar fontes instaladas:
-pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\brasilia-night\windows\scripts\Install-Fonts.ps1 -CheckOnly
+pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\nocturne\windows\scripts\Install-Fonts.ps1 -CheckOnly
 
 # Simular instalação (-WhatIf):
-pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\brasilia-night\windows\scripts\Install-Fonts.ps1 -WhatIf
+pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\nocturne\windows\scripts\Install-Fonts.ps1 -WhatIf
 
 # Instalar fontes ausentes no escopo do usuário:
-pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\brasilia-night\windows\scripts\Install-Fonts.ps1
+pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\nocturne\windows\scripts\Install-Fonts.ps1
 ```
 
 ## 2. Sincronização de Configurações (`Sync-WindowsRice.ps1`)
 
 ```powershell
 # Simular sincronização (-WhatIf):
-pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\brasilia-night\windows\scripts\Sync-WindowsRice.ps1 -WhatIf
+pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\nocturne\windows\scripts\Sync-WindowsRice.ps1 -WhatIf
 
-# Aplicar sincronização (cria backup em %LOCALAPPDATA%\brasilia-night\backups):
-pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\brasilia-night\windows\scripts\Sync-WindowsRice.ps1
+# Aplicar sincronização (cria backup em %LOCALAPPDATA%\nocturne\backups):
+pwsh -File \\wsl.localhost\archlinux\home\JVZerinho\nocturne\windows\scripts\Sync-WindowsRice.ps1
 ```
 
 ## 3. Instalação Opcional dos Aplicativos Visuais via Winget

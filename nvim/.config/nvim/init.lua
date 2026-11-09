@@ -1,5 +1,5 @@
 -- =============================================================================
--- BRASILIA-NIGHT — NEOVIM >= 0.11 ENTRYPOINT
+-- NOCTURNE — NEOVIM >= 0.11 ENTRYPOINT
 -- Arquitetura: Modular Lua + Native vim.lsp.config + Lazy.nvim (strict lazy)
 -- =============================================================================
 

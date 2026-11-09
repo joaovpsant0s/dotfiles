@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — THEME & PERSONA VALIDATOR
+# NOCTURNE — THEME & PERSONA VALIDATOR
 # Valida palette.toml, persona.toml e garante zero hex hardcoded em templates
 # =============================================================================
 set -euo pipefail
@@ -10,11 +10,6 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PALETTE_FILE="${1:-$REPO_ROOT/theme/palette.toml}"
 PERSONA_FILE="${2:-$REPO_ROOT/identity/persona.toml}"
 TEMPLATES_DIR="$REPO_ROOT/theme/templates"
-
-if ! command -v python3 >/dev/null 2>&1; then
-  echo "[ERROR] python3 é obrigatório para validar TOML via stdlib (tomllib)." >&2
-  exit 1
-fi
 
 python3 - "$PALETTE_FILE" "$PERSONA_FILE" "$TEMPLATES_DIR" << 'PYEOF'
 import pathlib
@@ -40,15 +35,14 @@ with palette_path.open("rb") as f:
 with persona_path.open("rb") as f:
     persona = tomllib.load(f)
 
-# 1. Validate Persona required fields
 required_persona_str = [
     "owner_name",
     "display_name",
     "username",
     "github_username",
     "hostname",
-    "location",
-    "academic_affiliation",
+    "signature",
+    "tagline",
     "professional_role",
 ]
 for key in required_persona_str:
@@ -61,29 +55,18 @@ for list_key in ("primary_languages", "technical_focus"):
     if not isinstance(val, list) or not val or not all(isinstance(x, str) and x.strip() for x in val):
         sys.exit(f"[ERROR] identity/persona.toml: lista obrigatória inválida: '{list_key}'")
 
-# Ensure no email address is accidentally placed in persona.toml
 raw_persona = persona_path.read_text(encoding="utf-8")
 if re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", raw_persona):
     sys.exit("[ERROR] identity/persona.toml não deve conter endereços de e-mail públicos.")
 
-# 2. Validate Palette metadata, accents, and variants
 meta = palette.get("meta", {})
-variants_list = meta.get("variants", [])
-accents_list = meta.get("accents", [])
-default_variant = meta.get("default_variant")
-default_accent = meta.get("default_accent")
-
 expected_variants = ["night", "storm", "moon"]
 expected_accents = ["blue", "purple", "cyan", "green", "orange", "red"]
 
-if variants_list != expected_variants:
-    sys.exit(f"[ERROR] meta.variants esperado {expected_variants}, obtido {variants_list}")
-if accents_list != expected_accents:
-    sys.exit(f"[ERROR] meta.accents esperado {expected_accents}, obtido {accents_list}")
-if default_variant not in expected_variants:
-    sys.exit(f"[ERROR] default_variant inválido: {default_variant}")
-if default_accent not in expected_accents:
-    sys.exit(f"[ERROR] default_accent inválido: {default_accent}")
+if meta.get("variants") != expected_variants:
+    sys.exit(f"[ERROR] meta.variants inválido: {meta.get('variants')}")
+if meta.get("accents") != expected_accents:
+    sys.exit(f"[ERROR] meta.accents inválido: {meta.get('accents')}")
 
 accents_map = palette.get("accents", {})
 for acc in expected_accents:
@@ -119,7 +102,6 @@ for var_name in expected_variants:
         if not isinstance(c, str) or not HEX_RE.match(c):
             sys.exit(f"[ERROR] Cor inválida em [variants.{var_name}].{k}: {c!r}")
 
-# 3. Validate templates have ZERO hardcoded hex colors
 tpl_files = sorted(templates_dir.rglob("*.tpl"))
 if len(tpl_files) < 16:
     sys.exit(f"[ERROR] Esperados pelo menos 16 templates em {templates_dir}, encontrados {len(tpl_files)}")

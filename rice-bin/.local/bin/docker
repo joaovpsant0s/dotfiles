@@ -1,18 +1,38 @@
 #!/usr/bin/env bash
-# Wrapper seguro para Docker CLI no Arch Linux WSL 2
+# =============================================================================
+# NOCTURNE — DOCKER WSL 2 WRAPPER (With Automatic /dev/dxg GPU Passthrough)
+# Intercepta --gpus em 'docker run' e injeta /dev/dxg + /usr/lib/wsl quando necessário
+# =============================================================================
 set -euo pipefail
 
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLEAN_PATH="$(printf '%s' "$PATH" | awk -v RS=':' -v ORS=':' -v self="$SELF_DIR" '$0 != self && $0 != ""' | sed 's/:$//')"
 
+REAL_DOCKER=""
 if sys_docker="$(PATH="$CLEAN_PATH" command -v docker 2>/dev/null)"; then
-  exec "$sys_docker" "$@"
+  REAL_DOCKER="$sys_docker"
+elif [ -x "/mnt/c/Program Files/Docker/Docker/resources/bin/docker.exe" ]; then
+  REAL_DOCKER="/mnt/c/Program Files/Docker/Docker/resources/bin/docker.exe"
+elif [ -x "/mnt/c/Users/joaovpsantos/AppData/Local/Programs/DockerDesktop/resources/bin/docker" ]; then
+  REAL_DOCKER="/mnt/c/Users/joaovpsantos/AppData/Local/Programs/DockerDesktop/resources/bin/docker"
+else
+  echo "[ERROR] Docker CLI não encontrado." >&2
+  exit 127
 fi
 
-WIN_DOCKER="/mnt/c/Program Files/Docker/Docker/resources/bin/docker.exe"
-if [ -x "$WIN_DOCKER" ]; then
-  exec "$WIN_DOCKER" "$@"
+if [ "${1:-}" = "run" ] && [ -e /dev/dxg ] && [ -d /usr/lib/wsl ]; then
+  for arg in "$@"; do
+    case "$arg" in
+      --gpus|--gpus=*)
+        shift
+        exec "$REAL_DOCKER" run \
+          --device=/dev/dxg \
+          -v /usr/lib/wsl:/usr/lib/wsl:ro \
+          -e LD_LIBRARY_PATH=/usr/lib/wsl/lib \
+          "$@"
+        ;;
+    esac
+  done
 fi
 
-echo "[ERROR] Docker CLI não encontrado nem no Linux (/usr/bin/docker) nem no Docker Desktop." >&2
-exit 127
+exec "$REAL_DOCKER" "$@"

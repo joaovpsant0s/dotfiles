@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — THEME ENGINE TEST SUITE
+# NOCTURNE — THEME ENGINE TEST SUITE
 # Testa:
 # 1. Validação de palette.toml, persona.toml e zero hex em templates
 # 2. Todas as 18 combinações (3 variantes x 6 acentos)

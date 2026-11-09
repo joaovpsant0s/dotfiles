@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — SHELL SCRIPTS SYNTAX & QUALITY TEST SUITE
+# NOCTURNE — SHELL SCRIPTS SYNTAX & SHELLCHECK TEST SUITE
 # =============================================================================
 set -euo pipefail
 
@@ -17,6 +17,9 @@ SCRIPTS=(
   "$REPO_ROOT/scripts/validate-environment.sh"
   "$REPO_ROOT/scripts/benchmark.sh"
   "$REPO_ROOT/rice-bin/.local/bin/rice"
+  "$REPO_ROOT/rice-bin/.local/bin/fastfetch"
+  "$REPO_ROOT/rice-bin/.local/bin/devdoctor"
+  "$REPO_ROOT/rice-bin/.local/bin/arch-maint"
   "$REPO_ROOT/rice-bin/.local/bin/workbench"
   "$REPO_ROOT/rice-bin/.local/bin/sesh-picker"
   "$REPO_ROOT/rice-bin/.local/bin/docker"
@@ -44,8 +47,6 @@ echo "[OK] ${#SCRIPTS[@]} scripts validados com 'bash -n' e 100% LF."
 
 if command -v shellcheck >/dev/null 2>&1; then
   echo "=== [TEST] Executando ShellCheck ==="
-  shellcheck -x "${SCRIPTS[@]}"
-  echo "[OK] ShellCheck aprovado sem avisos."
-else
-  echo "[INFO] shellcheck ausente no sistema atual (será instalado via 'make install-packages')."
+  shellcheck -x -S error "${SCRIPTS[@]}"
+  echo "[OK] ShellCheck aprovado sem erros."
 fi

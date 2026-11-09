@@ -10,6 +10,6 @@
       "    return EXIT_SUCCESS;",
       "}"
     ],
-    "description": "Template C17 para exercícios de APC (UnB/FGA)"
+    "description": "Template C17 para exercícios de APC"
   }
 }

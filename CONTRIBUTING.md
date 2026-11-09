@@ -1,4 +1,4 @@
-# Guia de Contribuição e Manutenção — `brasilia-night`
+# Guia de Contribuição e Manutenção — `nocturne`
 
 ## Regras Inegociáveis
 

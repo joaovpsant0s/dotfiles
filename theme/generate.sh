@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — ATOMIC THEME ENGINE GENERATOR
+# NOCTURNE — ATOMIC THEME ENGINE GENERATOR
 # Renderiza temas a partir de palette.toml + persona.toml + state.env
 # =============================================================================
 set -euo pipefail
@@ -16,50 +16,23 @@ ACCENT=""
 DRY_RUN=0
 QUIET=0
 
-usage() {
-  cat << 'USAGE'
-Uso: generate.sh [opções]
-
-Opções:
-  -v, --variant <night|storm|moon>                 Define a variante (padrão: state.env ou night)
-  -a, --accent <blue|purple|cyan|green|orange|red> Define o acento (padrão: state.env ou purple)
-  -n, --dry-run                                    Simula a geração sem escrever arquivos
-  -q, --quiet                                      Reduz a saída informativa
-  -h, --help                                       Mostra esta ajuda
-USAGE
-}
-
 while [ $# -gt 0 ]; do
   case "$1" in
-    -v|--variant)
-      VARIANT="${2:-}"
-      shift 2
-      ;;
-    -a|--accent)
-      ACCENT="${2:-}"
-      shift 2
-      ;;
-    -n|--dry-run)
-      DRY_RUN=1
-      shift
-      ;;
-    -q|--quiet)
-      QUIET=1
-      shift
-      ;;
+    -v|--variant) VARIANT="${2:-}"; shift 2 ;;
+    -a|--accent)  ACCENT="${2:-}"; shift 2 ;;
+    -n|--dry-run) DRY_RUN=1; shift ;;
+    -q|--quiet)   QUIET=1; shift ;;
     -h|--help)
-      usage
+      echo "Uso: generate.sh [--variant night|storm|moon] [--accent blue|purple|cyan|green|orange|red] [--dry-run] [--quiet]"
       exit 0
       ;;
     *)
       echo "[ERROR] Argumento desconhecido: $1" >&2
-      usage >&2
       exit 2
       ;;
   esac
 done
 
-# Safe parser for state.env (never sources arbitrary code)
 read_state_key() {
   local key="$1"
   local file="$2"
@@ -85,7 +58,6 @@ if [ -z "$ACCENT" ]; then
   ACCENT="${ACCENT:-purple}"
 fi
 
-# Validate palette, persona, and templates first
 "$SCRIPT_DIR/validate.sh" "$PALETTE_FILE" "$PERSONA_FILE" >/dev/null
 
 python3 - "$REPO_ROOT" "$PALETTE_FILE" "$PERSONA_FILE" "$VARIANT" "$ACCENT" "$DRY_RUN" "$QUIET" << 'PYEOF'
@@ -125,6 +97,9 @@ tokens = {
     "VARIANT": variant,
     "ACCENT_NAME": accent_name,
     "ACCENT": accent_hex,
+    "ACCENT_BLUE": accents["blue"],
+    "ACCENT_PURPLE": accents["purple"],
+    "ACCENT_CYAN": accents["cyan"],
     "BACKGROUND": v["background"],
     "BACKGROUND_ALT": v["background_alt"],
     "SURFACE": v["surface"],
@@ -145,19 +120,22 @@ tokens = {
     "USERNAME": persona["username"],
     "GITHUB_USERNAME": persona["github_username"],
     "HOSTNAME": persona["hostname"],
-    "LOCATION": persona["location"],
-    "ACADEMIC_AFFILIATION": persona["academic_affiliation"],
+    "SIGNATURE": persona["signature"],
+    "TAGLINE": persona["tagline"],
     "PROFESSIONAL_ROLE": persona["professional_role"],
 }
 
 for i in range(16):
     tokens[f"ANSI_{i}"] = v[f"ansi_{i}"]
 
-# Mapping: template relative to theme/templates -> list of output paths relative to repo_root
 targets = [
-    ("wezterm/brasilia-night.toml.tpl", [
-        "theme/generated/wezterm/brasilia-night.toml",
-        "windows/config/wezterm/colors/brasilia-night.toml",
+    ("wezterm/nocturne.toml.tpl", [
+        "theme/generated/wezterm/nocturne.toml",
+        "windows/config/wezterm/colors/nocturne.toml",
+    ]),
+    ("windows-terminal/scheme.json.tpl", [
+        "theme/generated/windows-terminal/scheme.json",
+        "windows/config/windows-terminal/scheme.json",
     ]),
     ("tmux/theme.conf.tpl", [
         "theme/generated/tmux/theme-generated.conf",
@@ -167,6 +145,10 @@ targets = [
         "theme/generated/starship/starship.toml",
         "starship/.config/starship.toml",
     ]),
+    ("starship/starship-pwsh.toml.tpl", [
+        "theme/generated/starship/starship-pwsh.toml",
+        "windows/config/starship/starship.toml",
+    ]),
     ("nvim/theme_generated.lua.tpl", [
         "theme/generated/nvim/theme_generated.lua",
         "nvim/.config/nvim/lua/config/theme_generated.lua",
@@ -175,9 +157,9 @@ targets = [
         "theme/generated/yazi/theme.toml",
         "yazi/.config/yazi/theme.toml",
     ]),
-    ("btop/brasilia-night.theme.tpl", [
-        "theme/generated/btop/brasilia-night.theme",
-        "btop/.config/btop/themes/brasilia-night.theme",
+    ("btop/nocturne.theme.tpl", [
+        "theme/generated/btop/nocturne.theme",
+        "btop/.config/btop/themes/nocturne.theme",
     ]),
     ("lazygit/theme.yml.tpl", [
         "theme/generated/lazygit/theme.yml",
@@ -206,6 +188,17 @@ targets = [
     ("fastfetch/config.jsonc.tpl", [
         "theme/generated/fastfetch/config.jsonc",
         "fastfetch/.config/fastfetch/config.jsonc",
+    ]),
+    ("fastfetch/compact.jsonc.tpl", [
+        "theme/generated/fastfetch/compact.jsonc",
+        "fastfetch/.config/fastfetch/compact.jsonc",
+    ]),
+    ("fastfetch/diagnostic.jsonc.tpl", [
+        "theme/generated/fastfetch/diagnostic.jsonc",
+        "fastfetch/.config/fastfetch/diagnostic.jsonc",
+    ]),
+    ("fastfetch/windows.jsonc.tpl", [
+        "theme/generated/fastfetch/windows.jsonc",
         "windows/config/fastfetch/config.jsonc",
     ]),
     ("glazewm/theme.yaml.tpl", [
@@ -261,7 +254,7 @@ for tpl_rel, out_rels in targets:
             continue
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        fd, tmp_name = tempfile.mkstemp(prefix=".bn_tmp_", dir=str(out_path.parent))
+        fd, tmp_name = tempfile.mkstemp(prefix=".noc_tmp_", dir=str(out_path.parent))
         try:
             with os.fdopen(fd, "wb") as tmp_file:
                 tmp_file.write(rendered_bytes)

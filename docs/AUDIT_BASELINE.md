@@ -1,4 +1,4 @@
-# Auditoria Baseline do Ambiente — `brasilia-night`
+# Auditoria Baseline do Ambiente — `nocturne`
 
 Data da auditoria (somente leitura): `2026-11-08`
 
@@ -32,4 +32,4 @@ Data da auditoria (somente leitura): `2026-11-08`
 1. `/home/JVZerinho/secret.txt` (`-rw-r--r-- 1 root root 164 Oct 2 11:37`): preservado integralmente sem leitura ou modificação.
 2. Symlinks `.aws -> /mnt/c/Users/joaovpsantos/.aws` e `.azure -> /mnt/c/Users/joaovpsantos/.azure`: preservados.
 3. Diretórios `bindmount-apps`, `multi-container-app`, `welcome-to-docker` e `yay`: preservados fora do escopo do Stow.
-4. Repositório Git na raiz do perfil Windows (`C:\Users\joaovpsantos\.git`): preservado sem alterações; o repositório `brasilia-night` foi isolado em `/home/JVZerinho/brasilia-night` (`ext4`).
+4. Repositório Git na raiz do perfil Windows (`C:\Users\joaovpsantos\.git`): preservado sem alterações; o repositório `nocturne` foi isolado em `/home/JVZerinho/nocturne` (`ext4`).

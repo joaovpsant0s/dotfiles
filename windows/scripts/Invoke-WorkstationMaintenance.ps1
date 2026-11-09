@@ -12,7 +12,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 Write-Host "╭──────────────────────────────────────────────────────────────────╮" -ForegroundColor Cyan
-Write-Host "│  BRASILIA-NIGHT — WORKSTATION DIAGNOSTICS & MAINTENANCE          │" -ForegroundColor Cyan
+Write-Host "│  NOCTURNE — WORKSTATION DIAGNOSTICS & MAINTENANCE          │" -ForegroundColor Cyan
 Write-Host "╰──────────────────────────────────────────────────────────────────╯" -ForegroundColor Cyan
 
 # 1. Hardware & Memory Summary

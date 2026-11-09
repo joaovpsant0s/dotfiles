@@ -1,7 +1,7 @@
 -- =============================================================================
--- BRASILIA-NIGHT — AUTOCOMMANDS
+-- NOCTURNE — AUTOCOMMANDS
 -- =============================================================================
-local augroup = vim.api.nvim_create_augroup("BrasiliaNightCore", { clear = true })
+local augroup = vim.api.nvim_create_augroup("NocturneCore", { clear = true })
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {

@@ -1,7 +1,0 @@
-[Unit]
-Description=Brasilia-Night User Cache & State Maintenance
-Documentation=https://github.com/joaovpsant0s/brasilia-night
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/find %h/.cache/zsh -type f -mtime +30 -delete

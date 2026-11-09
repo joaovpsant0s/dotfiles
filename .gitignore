@@ -6,15 +6,20 @@ theme/generated/*
 tmux/.config/tmux/theme-generated.conf
 nvim/.config/nvim/lua/config/theme_generated.lua
 yazi/.config/yazi/theme.toml
-btop/.config/btop/themes/brasilia-night.theme
+btop/.config/btop/themes/nocturne.theme
 lazygit/.config/lazygit/theme.yml
 lazydocker/.config/lazydocker/config.yml
 git/.config/git/delta-theme.gitconfig
 fastfetch/.config/fastfetch/config.jsonc
+fastfetch/.config/fastfetch/compact.jsonc
+fastfetch/.config/fastfetch/diagnostic.jsonc
 starship/.config/starship.toml
-windows/config/wezterm/colors/brasilia-night.toml
+windows/config/starship/starship.toml
+windows/config/wezterm/colors/nocturne.toml
 windows/config/glazewm/theme.yaml
 windows/config/zebar/theme.css
+windows/config/fastfetch/config.jsonc
+windows/config/windows-terminal/scheme.json
 
 # Local state, backups, caches, and OS files
 .DS_Store
@@ -25,4 +30,3 @@ Thumbs.db
 .env
 *.bak
 .cache/
-windows/config/fastfetch/config.jsonc

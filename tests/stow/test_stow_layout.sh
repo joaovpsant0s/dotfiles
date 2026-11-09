@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — STOW LAYOUT, ISOLATION & IDEMPOTENCY TEST SUITE
+# NOCTURNE — STOW LAYOUT, ISOLATION & IDEMPOTENCY TEST SUITE
 # =============================================================================
 set -euo pipefail
 
@@ -38,7 +38,7 @@ for expected_link in \
   ".config/lazygit/theme.yml" \
   ".config/lazydocker/config.yml" \
   ".config/btop/btop.conf" \
-  ".config/btop/themes/brasilia-night.theme" \
+  ".config/btop/themes/nocturne.theme" \
   ".config/fastfetch/config.jsonc" \
   ".local/bin/rice" \
   ".local/bin/wb" \

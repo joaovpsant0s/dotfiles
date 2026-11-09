@@ -1,5 +1,5 @@
 [Unit]
-Description=Weekly Brasilia-Night User Cache Maintenance
+Description=Weekly Nocturne User Cache Maintenance
 
 [Timer]
 OnCalendar=weekly

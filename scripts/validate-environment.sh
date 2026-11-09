@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — ENVIRONMENT VALIDATOR (rice doctor)
+# NOCTURNE — ENVIRONMENT VALIDATOR (rice doctor)
 # Verifica integridade do repositório, proteção de arquivos e estado das ferramentas
 # =============================================================================
 set -euo pipefail
@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "╭──────────────────────────────────────────────────────────────────╮"
-echo "│  BRASILIA-NIGHT — ENVIRONMENT DOCTOR & COMPLIANCE CHECK          │"
+echo "│  NOCTURNE — ENVIRONMENT DOCTOR & COMPLIANCE CHECK          │"
 echo "╰──────────────────────────────────────────────────────────────────╯"
 
 # 1. Validate TOML Single Source of Truth & Templates

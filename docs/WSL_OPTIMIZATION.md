@@ -2,12 +2,12 @@
 
 ## 1. Ativando o `systemd` no Arch Linux WSL 2
 
-A auditoria baseline identificou que o PID 1 atual é `/init`. O arquivo `wsl-system/wsl.conf` já está preparado com `systemd = true` e `hostname = gama`.
+A auditoria baseline identificou que o PID 1 atual é `/init`. O arquivo `wsl-system/wsl.conf` já está preparado com `systemd = true` e `hostname = arch`.
 
 Para ativar com segurança e backup:
 ```bash
 sudo cp /etc/wsl.conf /etc/wsl.conf.bak.$(date +%Y%m%d)
-sudo cp ~/brasilia-night/wsl-system/wsl.conf /etc/wsl.conf
+sudo cp ~/nocturne/wsl-system/wsl.conf /etc/wsl.conf
 ```
 Em seguida, no PowerShell do Windows:
 ```powershell

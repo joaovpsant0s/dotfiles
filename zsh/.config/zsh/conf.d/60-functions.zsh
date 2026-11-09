@@ -1,9 +1,8 @@
-# 60-functions.zsh — Funções utilitárias de navegação e produtividade
+# 60-functions.zsh — Funções utilitárias de navegação e proteção NTFS
 
-# Wrapper oficial Yazi para trocar de diretório ao sair com 'q'
 y() {
   if ! command -v yazi >/dev/null 2>&1; then
-    echo "[WARN] yazi ainda não está instalado." >&2
+    echo "[WARN] yazi não encontrado." >&2
     return 1
   fi
   local tmp
@@ -20,7 +19,7 @@ mkcd() {
 }
 
 git() {
-  if [[ -n "${BN_ON_WINDOWS_FS:-}" && "${1:-}" == "status" ]]; then
+  if [[ -n "${NOCTURNE_ON_WINDOWS_FS:-}" && "${1:-}" == "status" ]]; then
     command git -c core.preloadindex=true -c status.showUntrackedFiles=no "$@"
   else
     command git "$@"

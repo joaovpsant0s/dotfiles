@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — IDEMPOTENT DOTFILES INSTALLER
-# Vincula exclusivamente os 12 pacotes Stow ao diretório alvo ($HOME por padrão)
-# Nunca vincula diretórios administrativos (docs, packages, windows, theme, etc.)
+# NOCTURNE — IDEMPOTENT DOTFILES INSTALLER (GNU Stow --no-folding)
 # =============================================================================
 set -euo pipefail
 
@@ -42,18 +40,9 @@ UNSTOW=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --target|-t)
-      TARGET_DIR="${2:-}"
-      shift 2
-      ;;
-    --dry-run|-n)
-      DRY_RUN=1
-      shift
-      ;;
-    --unstow|-D)
-      UNSTOW=1
-      shift
-      ;;
+    --target|-t) TARGET_DIR="${2:-}"; shift 2 ;;
+    --dry-run|-n) DRY_RUN=1; shift ;;
+    --unstow|-D) UNSTOW=1; shift ;;
     -h|--help)
       echo "Uso: ./install.sh [--target <dir>] [--dry-run] [--unstow]"
       exit 0
@@ -68,7 +57,6 @@ done
 mkdir -p "$TARGET_DIR"
 TARGET_DIR="$(cd "$TARGET_DIR" && pwd)"
 
-# Safety check: verify no forbidden package is ever in STOW_PACKAGES
 for pkg in "${STOW_PACKAGES[@]}"; do
   for bad in "${FORBIDDEN_PACKAGES[@]}"; do
     if [ "$pkg" = "$bad" ]; then
@@ -78,7 +66,6 @@ for pkg in "${STOW_PACKAGES[@]}"; do
   done
 done
 
-# 1. Generate all theme artifacts first so no application ever sees a missing file
 if [ "$UNSTOW" -eq 0 ]; then
   if [ "$DRY_RUN" -eq 1 ]; then
     "$REPO_ROOT/theme/generate.sh" --dry-run --quiet
@@ -88,96 +75,51 @@ if [ "$UNSTOW" -eq 0 ]; then
   fi
 fi
 
-# 2. Link packages using GNU Stow (if available) or deterministic Python Stow-compatible linker
 if command -v stow >/dev/null 2>&1; then
-  echo "[INSTALL] Utilizando GNU Stow para gerenciar pacotes em $TARGET_DIR..."
+  echo "[INSTALL] Aplicando 12 pacotes via GNU Stow (--no-folding) em $TARGET_DIR..."
   for pkg in "${STOW_PACKAGES[@]}"; do
     if [ "$UNSTOW" -eq 1 ]; then
       if [ "$DRY_RUN" -eq 1 ]; then
-        stow --no --verbose --dir="$REPO_ROOT" --target="$TARGET_DIR" -D "$pkg"
+        stow --no --no-folding --verbose --dir="$REPO_ROOT" --target="$TARGET_DIR" -D "$pkg"
       else
-        stow --dir="$REPO_ROOT" --target="$TARGET_DIR" -D "$pkg"
+        stow --no-folding --dir="$REPO_ROOT" --target="$TARGET_DIR" -D "$pkg"
       fi
     else
       if [ "$DRY_RUN" -eq 1 ]; then
-        stow --no --verbose --dir="$REPO_ROOT" --target="$TARGET_DIR" --restow "$pkg"
+        stow --no --no-folding --verbose --dir="$REPO_ROOT" --target="$TARGET_DIR" --restow "$pkg"
       else
-        # Remove conflicting non-symlink regular files already backed up by backup.sh
         python3 - "$REPO_ROOT/$pkg" "$TARGET_DIR" << 'PYCLEAN'
 import pathlib, sys
-pkg_dir = pathlib.Path(sys.argv[1])
-target_dir = pathlib.Path(sys.argv[2])
+pkg_dir = pathlib.Path(sys.argv[1]).resolve()
+target_dir = pathlib.Path(sys.argv[2]).resolve()
+PROTECTED = {"secret.txt", ".aws", ".azure", "bindmount-apps", "multi-container-app", "welcome-to-docker", "yay"}
 for src in pkg_dir.rglob("*"):
-    if src.is_file() or src.is_symlink():
-        rel = src.relative_to(pkg_dir)
-        dst = target_dir / rel
-        if dst.exists() and not dst.is_symlink() and dst.is_file():
+    if src.is_dir() and not src.is_symlink():
+        continue
+    rel = src.relative_to(pkg_dir)
+    if rel.parts[0] in PROTECTED:
+        continue
+    dst = target_dir / rel
+    if dst.is_symlink():
+        try:
+            if dst.resolve() != src.resolve():
+                dst.unlink()
+        except OSError:
             dst.unlink()
+    elif dst.exists() and dst.is_file():
+        dst.unlink()
 PYCLEAN
-        stow --dir="$REPO_ROOT" --target="$TARGET_DIR" --restow "$pkg"
+        stow --no-folding --dir="$REPO_ROOT" --target="$TARGET_DIR" --restow "$pkg"
       fi
     fi
   done
-else
-  echo "[INSTALL] GNU Stow ainda não instalado; aplicando symlinks compatíveis com Stow via Python stdlib..."
-  python3 - "$REPO_ROOT" "$TARGET_DIR" "$DRY_RUN" "$UNSTOW" "${STOW_PACKAGES[@]}" << 'PYSTOW'
-import os
-import pathlib
-import sys
+  echo "[OK] 12 pacotes Stow vinculados com sucesso em $TARGET_DIR."
+fi
 
-repo_root = pathlib.Path(sys.argv[1])
-target_dir = pathlib.Path(sys.argv[2])
-dry_run = sys.argv[3] == "1"
-unstow = sys.argv[4] == "1"
-packages = sys.argv[5:]
-
-PROTECTED_NAMES = {"secret.txt", ".aws", ".azure", "bindmount-apps", "multi-container-app", "welcome-to-docker", "yay"}
-
-linked = 0
-removed = 0
-
-for pkg in packages:
-    pkg_dir = repo_root / pkg
-    if not pkg_dir.is_dir():
-        sys.exit(f"[ERROR] Pacote ausente: {pkg_dir}")
-
-    for src in sorted(pkg_dir.rglob("*")):
-        if src.is_dir() and not src.is_symlink():
-            continue
-        rel = src.relative_to(pkg_dir)
-        if rel.parts[0] in PROTECTED_NAMES:
-            sys.exit(f"[FATAL] Tentativa bloqueada de tocar em caminho protegido: {rel}")
-
-        dst = target_dir / rel
-        if unstow:
-            if dst.is_symlink() and dst.resolve() == src.resolve():
-                if not dry_run:
-                    dst.unlink()
-                removed += 1
-            continue
-
-        if dst.is_symlink():
-            try:
-                if dst.resolve() == src.resolve():
-                    continue
-            except OSError:
-                pass
-            if not dry_run:
-                dst.unlink()
-        elif dst.exists():
-            if not dry_run:
-                dst.unlink()
-
-        if not dry_run:
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            rel_target = os.path.relpath(src, dst.parent)
-            dst.symlink_to(rel_target)
-        linked += 1
-
-if unstow:
-    print(f"[OK] Unstow concluído ({removed} links removidos).")
-else:
-    mode = "DRY-RUN" if dry_run else "APPLIED"
-    print(f"[OK] ({mode}) {len(packages)} pacotes vinculados em {target_dir} ({linked} novos links atualizados).")
-PYSTOW
+if [ "$UNSTOW" -eq 0 ] && [ "$DRY_RUN" -eq 0 ] && [ "$TARGET_DIR" = "$HOME" ] && command -v zsh >/dev/null 2>&1; then
+  zsh -c '
+    for f in "$HOME/.zshenv" "$HOME/.config/zsh/.zshrc" "$HOME/.config/zsh/conf.d/"*.zsh(N); do
+      [[ -f "$f" ]] && zcompile "$f" 2>/dev/null || true
+    done
+  ' || true
 fi

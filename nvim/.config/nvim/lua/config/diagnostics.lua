@@ -1,5 +1,5 @@
 -- =============================================================================
--- BRASILIA-NIGHT — DIAGNOSTICS CONFIGURATION
+-- NOCTURNE — DIAGNOSTICS CONFIGURATION
 -- =============================================================================
 vim.diagnostic.config({
   virtual_text = {

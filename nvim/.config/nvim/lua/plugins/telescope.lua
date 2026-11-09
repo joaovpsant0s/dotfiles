@@ -1,4 +1,3 @@
--- Preferência por Snacks Picker (sem duplicar Telescope)
 return {
   {
     "folke/snacks.nvim",
@@ -13,14 +12,14 @@ return {
     opts = function()
       local theme = require("config.theme").current
       local header = table.concat({
-        "      ╱╲        ╱╲        ╱╲        ╱╲      ",
-        "     ╱  ╲      ╱  ╲      ╱  ╲      ╱  ╲     ",
-        "    ╱    ╲____╱    ╲____╱    ╲____╱    ╲    ",
-        "    ╲    ╱    ╲    ╱    ╲    ╱    ╲    ╱    ",
-        "     ╲  ╱      ╲  ╱      ╲  ╱      ╲  ╱     ",
-        "      ╲╱        ╲╱        ╲╱        ╲╱      ",
-        "   B R A S I L I A  —  N I G H T   v 2 . 0  ",
-        "   " .. (theme.persona.display_name or "João Victor") .. " · UnB/FGA · " .. (theme.variant or "night") .. ":" .. (theme.accent_name or "purple"),
+        "               /\\               ",
+        "              /  \\              ",
+        "             / /\\ \\             ",
+        "            / /  \\ \\            ",
+        "           / /____\\ \\           ",
+        "          /_/      \\_\\          ",
+        "   N O C T U R N E  ·  A R C H  ",
+        "   " .. (theme.variant or "night") .. ":" .. (theme.accent_name or "purple") .. " · i use arch, btw",
       }, "\n")
       return {
         picker = { enabled = true },
@@ -32,7 +31,7 @@ return {
             keys = {
               { icon = " ", key = "f", desc = "Buscar arquivo", action = ":lua Snacks.dashboard.pick('files')" },
               { icon = " ", key = "r", desc = "Arquivos recentes", action = ":lua Snacks.dashboard.pick('oldfiles')" },
-              { icon = " ", key = "a", desc = "Monitoria APC (ApcInit)", action = ":ApcInit" },
+              { icon = " ", key = "a", desc = "Algorithms Runner (AlgoInit)", action = ":AlgoInit" },
               { icon = " ", key = "w", desc = "Abrir Workbench (wb)", action = ":!wb code" },
               { icon = " ", key = "q", desc = "Sair", action = ":qa" },
             },

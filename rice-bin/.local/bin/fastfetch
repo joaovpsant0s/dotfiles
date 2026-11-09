@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# =============================================================================
+# NOCTURNE — RESPONSIVE FASTFETCH WRAPPER
+# - Sem argumentos: seleciona config.jsonc (>=68 cols) ou compact.jsonc (<68 cols)
+# - --full / --diag: abre o preset completo diagnostic.jsonc
+# - Qualquer outra flag: repassa diretamente para /usr/bin/fastfetch
+# =============================================================================
+set -euo pipefail
+
+SYS_FF="/usr/bin/fastfetch"
+if [ ! -x "$SYS_FF" ]; then
+  echo "[ERROR] /usr/bin/fastfetch não encontrado." >&2
+  exit 127
+fi
+
+CFG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/fastfetch"
+
+if [ $# -gt 0 ]; then
+  case "$1" in
+    --full|--diag|-d)
+      shift
+      exec "$SYS_FF" --config "$CFG_DIR/diagnostic.jsonc" "$@"
+      ;;
+    --compact)
+      shift
+      exec "$SYS_FF" --config "$CFG_DIR/compact.jsonc" "$@"
+      ;;
+    *)
+      exec "$SYS_FF" "$@"
+      ;;
+  esac
+fi
+
+# Detect non-interactive pipe
+if [ ! -t 1 ] && [ -z "${NOCTURNE_FORCE_TTY:-}" ]; then
+  exec "$SYS_FF" --config "$CFG_DIR/compact.jsonc" --pipe true
+fi
+
+# Detect terminal width (COLUMNS -> tput cols -> stty size -> default 100)
+COLS="${COLUMNS:-}"
+if [ -z "$COLS" ] && command -v tput >/dev/null 2>&1; then
+  COLS="$(tput cols 2>/dev/null || true)"
+fi
+if [ -z "$COLS" ] || ! [[ "$COLS" =~ ^[0-9]+$ ]] || [ "$COLS" -le 0 ]; then
+  COLS=100
+fi
+
+# Fallback when NOCTURNE_ASCII=1 or TERM=linux/dumb
+if [ "${NOCTURNE_ASCII:-0}" = "1" ] || [ "${TERM:-}" = "linux" ] || [ "${TERM:-}" = "dumb" ] || [ "$COLS" -lt 68 ]; then
+  exec "$SYS_FF" --config "$CFG_DIR/compact.jsonc"
+else
+  exec "$SYS_FF" --config "$CFG_DIR/config.jsonc"
+fi

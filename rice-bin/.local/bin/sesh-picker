@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — SESH PICKER (Tmux + Zoxide + FZF Session Manager)
+# NOCTURNE — SESH PICKER (Tmux + Zoxide + FZF Session Manager)
 # =============================================================================
 set -euo pipefail
 
@@ -24,7 +24,7 @@ fi
 
 selection=""
 if command -v fzf >/dev/null 2>&1; then
-  selection="$(collect_candidates | fzf --prompt="🏛 sesh ▸ " --height=45% --layout=reverse --border=rounded || true)"
+  selection="$(collect_candidates | fzf --prompt="▲ sesh ▸ " --height=45% --layout=reverse --border=rounded || true)"
 else
   echo "Selecione uma sessão/diretório:"
   mapfile -t items < <(collect_candidates)

@@ -8,5 +8,5 @@ Enquanto o pacote `zsh` ainda não foi instalado e o shell padrão for `bash`, c
 - No Tmux, pressione `Ctrl+a` seguido de `r` para recarregar `~/.config/tmux/tmux.conf`.
 - Para sincronizar com o Windows manualmente, execute `rice sync`.
 
-## 3. Restaurar Configurações Originais antes do `brasilia-night`
-Liste os backups em `~/.local/state/brasilia-night/backups/` e execute o script `restore.sh` correspondente.
+## 3. Restaurar Configurações Originais antes do `nocturne`
+Liste os backups em `~/.local/state/nocturne/backups/` e execute o script `restore.sh` correspondente.

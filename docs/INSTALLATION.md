@@ -1,9 +1,9 @@
-# Guia de Instalação e Reversibilidade — `brasilia-night`
+# Guia de Instalação e Reversibilidade — `nocturne`
 
 ## 1. Aplicação User-Space (Sem Sudo)
 
 ```bash
-cd ~/brasilia-night
+cd ~/nocturne
 make validate
 make test
 make install
@@ -11,7 +11,7 @@ make install
 
 O comando `make install` executa automaticamente:
 1. `theme/generate.sh` para garantir que todos os arquivos derivados existam.
-2. `scripts/backup.sh` para salvar qualquer arquivo preexistente conflitante em `~/.local/state/brasilia-night/backups/<timestamp>/` com manifesto `SHA256SUMS` e script `restore.sh`.
+2. `scripts/backup.sh` para salvar qualquer arquivo preexistente conflitante em `~/.local/state/nocturne/backups/<timestamp>/` com manifesto `SHA256SUMS` e script `restore.sh`.
 3. Vinculação dos 12 pacotes Stow em `$HOME`.
 
 ## 2. Instalação de Pacotes Arch Linux & AUR (Com Autenticação Interativa)
@@ -36,5 +36,5 @@ make install-packages
 make unstow
 
 # Restaurar snapshot específico:
-~/.local/state/brasilia-night/backups/<timestamp>/restore.sh
+~/.local/state/nocturne/backups/<timestamp>/restore.sh
 ```

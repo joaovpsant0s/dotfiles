@@ -1,5 +1,5 @@
 -- =============================================================================
--- BRASILIA-NIGHT — NATIVE NEOVIM 0.11+ LSP CONFIGURATION
+-- NOCTURNE — NATIVE NEOVIM 0.11+ LSP CONFIGURATION
 -- Utiliza vim.lsp.config() e vim.lsp.enable() com verificação vim.fn.executable
 -- =============================================================================
 local servers = {
@@ -82,7 +82,7 @@ if vim.fn.executable("basedpyright-langserver") == 0 and vim.fn.executable("pyri
 end
 
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = vim.api.nvim_create_augroup("BrasiliaNightLspAttach", { clear = true }),
+  group = vim.api.nvim_create_augroup("NocturneLspAttach", { clear = true }),
   callback = function(event)
     local map = function(keys, func, desc)
       vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })

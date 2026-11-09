@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — REAL STATISTICAL BENCHMARK SUITE
+# NOCTURNE — REAL STATISTICAL BENCHMARK SUITE
 # Mede Cold, Warm, Média, Mediana e P95 reais usando Python time.perf_counter
 # NUNCA inventa resultados para ferramentas não instaladas
 # =============================================================================
@@ -51,7 +51,7 @@ def bench_cmd(label, cmd, n=runs):
     print(f"  {label:<32} | cold={cold:6.2f}ms | warm_min={warm_min:6.2f}ms | mean={mean:6.2f}ms | median={median:6.2f}ms | p95={p95:6.2f}ms (n={n})")
 
 print("╭───────────────────────────────────────────────────────────────────────────────────────────────╮")
-print("│  BRASILIA-NIGHT — BENCHMARK REAL DE INICIALIZAÇÃO E ENGINE                                    │")
+print("│  NOCTURNE — BENCHMARK REAL DE INICIALIZAÇÃO E ENGINE                                    │")
 print("╰───────────────────────────────────────────────────────────────────────────────────────────────╯")
 
 bench_cmd("theme/generate.sh (idempotent)", [f"{repo_root}/theme/generate.sh", "--quiet"], n=runs)

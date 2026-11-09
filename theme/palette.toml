@@ -1,10 +1,10 @@
 # =============================================================================
-# BRASILIA-NIGHT — PALETTE SINGLE SOURCE OF TRUTH
-# Conceito: Tokyo Night + Arquitetura Modernista de Brasília
+# NOCTURNE — PALETTE SINGLE SOURCE OF TRUTH
+#
 # =============================================================================
 
 [meta]
-name = "brasilia-night"
+name = "nocturne"
 version = "2.0.0"
 default_variant = "night"
 default_accent = "purple"

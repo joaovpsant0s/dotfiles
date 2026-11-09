@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# BRASILIA-NIGHT — DECLARATIVE ARCH LINUX & AUR PACKAGE INSTALLER
+# NOCTURNE — DECLARATIVE ARCH LINUX & AUR PACKAGE INSTALLER
 # Regras:
 # - Nunca executa builds AUR como root
 # - Usa --needed (idempotente, nunca remove pacotes existentes)
@@ -83,7 +83,7 @@ if [ "$RUN_AUR" -eq 1 ]; then
 fi
 
 echo "╭──────────────────────────────────────────────────────────────────╮"
-echo "│  BRASILIA-NIGHT — GERENCIADOR DE PACOTES ARCH LINUX & AUR        │"
+echo "│  NOCTURNE — GERENCIADOR DE PACOTES ARCH LINUX & AUR        │"
 echo "╰──────────────────────────────────────────────────────────────────╯"
 
 if [ "${#OFFICIAL_PKGS[@]}" -gt 0 ]; then
