@@ -41,7 +41,7 @@ vimcmd_symbol = "[❮](bold fg:accent_blue)"
 
 [directory]
 style = "bold fg:foreground bg:surface_alt"
-format = "[ ⊞ ](bold fg:background_alt bg:accent_purple)[ $path ]($style)[$read_only]($read_only_style)  "
+format = "[  ](bold fg:background_alt bg:accent_purple)[ $path ]($style)[$read_only]($read_only_style)  "
 truncation_length = 4
 truncate_to_repo = false
 truncation_symbol = "…\\"
