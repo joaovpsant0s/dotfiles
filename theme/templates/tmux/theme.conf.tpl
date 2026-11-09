@@ -27,13 +27,13 @@ set -g pane-active-border-style "fg={{ACCENT}}"
 set -g display-panes-active-colour "{{ACCENT}}"
 set -g display-panes-colour "{{FOREGROUND_SUBTLE}}"
 
-set -g status-left-length 60
-set -g status-right-length 90
-set -g status-left "#[bg={{ACCENT_BLUE}},fg={{BACKGROUND_ALT}},bold] ▲ #S #[bg={{SURFACE}},fg={{ACCENT_BLUE}}]#[bg={{SURFACE}},fg={{FOREGROUND_MUTED}}] {{VARIANT}}:{{ACCENT_NAME}} #[bg={{BACKGROUND_ALT}},fg={{SURFACE}}] "
-set -g status-right "#[fg={{SURFACE}}]#[bg={{SURFACE}},fg={{FOREGROUND_MUTED}}] {{SIGNATURE}} #[fg={{ACCENT}},bg={{SURFACE}}]#[bg={{ACCENT}},fg={{BACKGROUND_ALT}},bold] %H:%M "
+set -g status-left-length 26
+set -g status-right-length 18
+set -g status-left "#[fg={{BACKGROUND_ALT}},bg={{ACCENT_BLUE}},bold] ▲ #[fg={{FOREGROUND}},bg={{SURFACE_ALT}},nobold] #{=18:session_name} #[default] "
+set -g status-right "#[fg={{FOREGROUND_MUTED}}] %H:%M "
 
-setw -g window-status-separator ""
-setw -g window-status-format "#[bg={{BACKGROUND_ALT}},fg={{FOREGROUND_SUBTLE}}]  #I:#W  "
-setw -g window-status-current-format "#[bg={{SURFACE_ALT}},fg={{ACCENT}},bold] ▸ #I:#W #[fg={{ACCENT_SECONDARY}}]#F "
+setw -g window-status-separator " "
+setw -g window-status-format "#[fg={{FOREGROUND_MUTED}}] #I:#{=16:window_name} "
+setw -g window-status-current-format "#[bg={{SURFACE_ALT}},fg={{ACCENT}},bold] #I:#{=16:window_name}#F "
 setw -g window-status-bell-style "bg={{ERROR}},fg={{BACKGROUND_ALT}},bold"
 setw -g window-status-activity-style "bg={{SURFACE}},fg={{WARNING}}"

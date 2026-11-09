@@ -18,6 +18,8 @@ scan_timeout = 30
 palette = "nocturne_pwsh"
 
 [palettes.nocturne_pwsh]
+background_alt = "{{BACKGROUND_ALT}}"
+surface_alt = "{{SURFACE_ALT}}"
 foreground = "{{FOREGROUND}}"
 foreground_muted = "{{FOREGROUND_MUTED}}"
 foreground_subtle = "{{FOREGROUND_SUBTLE}}"
@@ -38,8 +40,8 @@ error_symbol = "[❯](bold fg:error)"
 vimcmd_symbol = "[❮](bold fg:accent_blue)"
 
 [directory]
-style = "bold fg:foreground"
-format = "[$path]($style)[$read_only]($read_only_style)  "
+style = "bold fg:foreground bg:surface_alt"
+format = "[ ⊞ ](bold fg:background_alt bg:accent_purple)[ $path ]($style)[$read_only]($read_only_style)  "
 truncation_length = 4
 truncate_to_repo = false
 truncation_symbol = "…\\"
@@ -49,7 +51,7 @@ read_only_style = "fg:error"
 [git_branch]
 symbol = ""
 style = "bold fg:accent_purple"
-format = "on [$branch]($style)"
+format = "[↳ $branch]($style)"
 
 [git_status]
 style = "bold fg:warning"

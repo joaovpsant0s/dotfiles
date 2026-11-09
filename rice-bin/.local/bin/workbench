@@ -301,16 +301,24 @@ launch_layout() {
     return 0
   fi
 
+  local -a editor=() git_ui=()
+  if command -v nvim >/dev/null 2>&1; then
+    editor=('nvim .; exec "${SHELL:-/bin/sh}" -i')
+  fi
+  if [ "$layout" = code ] && command -v lazygit >/dev/null 2>&1 && git -C "$target_dir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    git_ui=('lazygit; exec "${SHELL:-/bin/sh}" -i')
+  fi
+
   if ! tmux has-session -t "=$session_name" 2>/dev/null; then
     case "$layout" in
       code)
-        tmux new-session -d -s "$session_name" -n "editor" -c "$target_dir"
+        tmux new-session -d -s "$session_name" -n "editor" -c "$target_dir" "${editor[@]}"
         tmux new-window -t "$session_name:2" -n "shell" -c "$target_dir"
-        tmux new-window -t "$session_name:3" -n "git" -c "$target_dir"
+        tmux new-window -t "$session_name:3" -n "git" -c "$target_dir" "${git_ui[@]}"
         tmux select-window -t "$session_name:1"
         ;;
       server)
-        tmux new-session -d -s "$session_name" -n "editor" -c "$target_dir"
+        tmux new-session -d -s "$session_name" -n "editor" -c "$target_dir" "${editor[@]}"
         tmux new-window -t "$session_name:2" -n "server-logs" -c "$target_dir"
         tmux split-window -h -t "$session_name:2" -c "$target_dir"
         tmux new-window -t "$session_name:3" -n "ops" -c "$target_dir"
@@ -323,7 +331,7 @@ launch_layout() {
         tmux select-window -t "$session_name:1"
         ;;
       study)
-        tmux new-session -d -s "$session_name" -n "notes" -c "$target_dir"
+        tmux new-session -d -s "$session_name" -n "notes" -c "$target_dir" "${editor[@]}"
         tmux new-window -t "$session_name:2" -n "latex-build" -c "$target_dir"
         tmux new-window -t "$session_name:3" -n "shell" -c "$target_dir"
         tmux select-window -t "$session_name:1"

@@ -4,34 +4,34 @@
         "type": "file",
         "source": "~/.config/fastfetch/logo-arch.txt",
         "color": {
-            "1": "{{ACCENT_BLUE}}"
+            "1": "{{ACCENT_BLUE}}",
+            "2": "{{ACCENT_CYAN}}"
         },
         "padding": {
-            "top": 0,
+            "top": 1,
             "left": 1,
             "right": 3
         }
     },
     "display": {
-        "separator": "   ",
+        "separator": "  ",
         "color": {
             "keys": "{{ACCENT_BLUE}}",
-            "title": "{{ACCENT_BLUE}}"
+            "title": "{{ACCENT_BLUE}}",
+            "output": "{{FOREGROUND}}"
         }
     },
     "modules": [
         {
             "type": "custom",
-            "format": "\u001b[1;38;2;122;162;247m{{SIGNATURE}}\u001b[0m"
+            "format": "nocturne  /  {{SIGNATURE}}",
+            "outputColor": "{{ACCENT_BLUE}}"
         },
-        {
-            "type": "custom",
-            "format": "\u001b[38;2;59;66;97m────────────────\u001b[0m"
-        },
+        "break",
         {
             "type": "os",
             "key": "os    ",
-            "format": "Arch Linux · WSL 2"
+            "format": "{name}{$NOCTURNE_WSL_SUFFIX}"
         },
         {
             "type": "shell",
@@ -39,9 +39,31 @@
             "format": "{process-name}"
         },
         {
+            "type": "packages",
+            "key": "pkgs  ",
+            "format": "{pacman} pacman"
+        },
+        {
+            "type": "cpu",
+            "key": "cpu   ",
+            "format": "{name} · {cores-logical}t"
+        },
+        {
+            "type": "gpu",
+            "key": "gpu   ",
+            "format": "{name}",
+            "hideType": "integrated"
+        },
+        {
             "type": "memory",
             "key": "mem   ",
-            "format": "{used} / {total}"
+            "format": "{used} / {total}  {percentage}"
+        },
+        {
+            "type": "disk",
+            "key": "disk  ",
+            "format": "{size-used} / {size-total} · {filesystem}",
+            "folders": "/"
         },
         {
             "type": "uptime",
@@ -50,7 +72,8 @@
         "break",
         {
             "type": "custom",
-            "format": "\u001b[38;2;86;95;137mi use arch, btw\u001b[0m"
+            "format": "{{TAGLINE}}",
+            "outputColor": "{{FOREGROUND_MUTED}}"
         }
     ]
 }

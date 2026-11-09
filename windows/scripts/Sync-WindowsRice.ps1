@@ -5,11 +5,13 @@
     Mescla de forma não-destrutiva o settings.json do Windows Terminal (perfis 'Arch · WSL'
     e 'PowerShell · host' + esquema Nocturne), configura o $PROFILE do PowerShell 7 e 5.1,
     e sincroniza Starship, Fastfetch, WezTerm, GlazeWM e Zebar com backup prévio e suporte a -WhatIf.
+    Use -AppearanceOnly para aplicar a interface sem substituir perfis PowerShell ou a configuração principal do GlazeWM.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [string]$WslDistro = 'archlinux',
     [string]$WslRepoPath = '/home/JVZerinho/nocturne',
+    [switch]$AppearanceOnly,
     [switch]$Quiet
 )
 
@@ -22,7 +24,7 @@ if (-not (Test-Path $UncRoot)) {
 }
 
 $WinConfigSource = Join-Path $UncRoot 'windows\config'
-$BackupRoot      = Join-Path $env:LOCALAPPDATA ("nocturne\backups\" + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+$BackupRoot      = Join-Path $env:LOCALAPPDATA ("nocturne\backups\" + ((Get-Date -Format 'yyyyMMdd-HHmmss-fff') + '-' + [guid]::NewGuid().ToString('N').Substring(0,8)))
 
 $SyncMappings = @(
     @{
@@ -81,6 +83,11 @@ $SyncMappings = @(
         Target = Join-Path $HOME '.glzr\zebar\theme.css'
     },
     @{
+        Name   = 'Windows Fastfetch (logo-windows.txt)'
+        Source = Join-Path $WinConfigSource 'fastfetch\logo-windows.txt'
+        Target = Join-Path $HOME '.config\fastfetch\logo-windows.txt'
+    },
+    @{
         Name   = 'Windows Fastfetch (config.jsonc)'
         Source = Join-Path $WinConfigSource 'fastfetch\config.jsonc'
         Target = Join-Path $HOME '.config\fastfetch\config.jsonc'
@@ -89,6 +96,12 @@ $SyncMappings = @(
 
 if (-not $Quiet) {
     Write-Host "=== NOCTURNE — WINDOWS RICE & TERMINAL SYNC ===" -ForegroundColor Cyan
+}
+
+if ($AppearanceOnly) {
+    $SyncMappings = @($SyncMappings | Where-Object {
+        $_.Name -match '^(PowerShell Starship|Windows Fastfetch|WezTerm|Zebar (HTML|Theme))'
+    })
 }
 
 foreach ($item in $SyncMappings) {
@@ -138,18 +151,21 @@ $SchemePath     = Join-Path $WinConfigSource "windows-terminal\scheme.json"
 
 if ((Test-Path $WtSettingsPath) -and (Test-Path $SchemePath)) {
     if ($PSCmdlet.ShouldProcess($WtSettingsPath, "Mesclar esquema Nocturne e perfis 'Arch · WSL' / 'PowerShell · host' no Windows Terminal")) {
-        New-Item -ItemType Directory -Path $BackupRoot -Force | Out-Null
-        Copy-Item -Path $WtSettingsPath -Destination (Join-Path $BackupRoot "WindowsTerminal_settings.json.bak") -Force
-
-        # Strip single-line // comments if present in JSONC before parsing
-        $rawWt = (Get-Content -Path $WtSettingsPath -Raw) -replace '(?m)^\s*//.*$', ''
-        $wtObj = $rawWt | ConvertFrom-Json
+        $wtObj = Get-Content -LiteralPath $WtSettingsPath -Raw | ConvertFrom-Json
+        $before = $wtObj | ConvertTo-Json -Depth 100
         $schemeObj = (Get-Content -Path $SchemePath -Raw) | ConvertFrom-Json
 
-        # Check if GeistMono Nerd Font is installed, else fallback to Geist Mono
+        # The Mono build keeps patched icons within one terminal cell.
         $userFontDir = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Fonts'
-        $hasNerdFont = (Test-Path $userFontDir) -and (@(Get-ChildItem -Path $userFontDir -Filter "GeistMono*NerdFont*.ttf" -ErrorAction SilentlyContinue).Count -gt 0)
-        $fontFace    = if ($hasNerdFont) { "GeistMono Nerd Font" } else { "Geist Mono" }
+        $fontFace = if (Test-Path -LiteralPath (Join-Path $userFontDir 'GeistMonoNerdFontMono-Regular.otf')) {
+            'GeistMono Nerd Font Mono'
+        }
+        elseif (Test-Path -LiteralPath (Join-Path $userFontDir 'JetBrainsMonoNerdFontMono-Regular.ttf')) {
+            'JetBrainsMono Nerd Font Mono'
+        }
+        else {
+            'Cascadia Mono'
+        }
 
         # Update or add Nocturne color scheme
         $existingSchemes = @()
@@ -157,42 +173,94 @@ if ((Test-Path $WtSettingsPath) -and (Test-Path $SchemePath)) {
             $existingSchemes = @($wtObj.schemes | Where-Object { $_.name -ne 'Nocturne' })
         }
         $existingSchemes += $schemeObj
-        $wtObj.schemes = $existingSchemes
-
-        # Update defaults
-        if (-not $wtObj.profiles.PSObject.Properties['defaults']) {
-            $wtObj.profiles | Add-Member -NotePropertyName 'defaults' -NotePropertyValue ([pscustomobject]@{})
+        if ($wtObj.PSObject.Properties['schemes']) {
+            $wtObj.schemes = $existingSchemes
         }
-        $wtObj.profiles.defaults | Add-Member -NotePropertyName 'colorScheme' -NotePropertyValue 'Nocturne' -Force
-        $wtObj.profiles.defaults | Add-Member -NotePropertyName 'padding' -NotePropertyValue '12, 10, 12, 10' -Force
-        $wtObj.profiles.defaults | Add-Member -NotePropertyName 'opacity' -NotePropertyValue 100 -Force
-        $wtObj.profiles.defaults | Add-Member -NotePropertyName 'cursorShape' -NotePropertyValue 'filledBox' -Force
-        $wtObj.profiles.defaults | Add-Member -NotePropertyName 'font' -NotePropertyValue ([pscustomobject]@{
-            face = $fontFace
-            size = 11
-        }) -Force
+        else {
+            $wtObj | Add-Member -NotePropertyName 'schemes' -NotePropertyValue $existingSchemes
+        }
 
-        # Customize Arch WSL and PowerShell profiles while preserving GUIDs
         foreach ($prof in $wtObj.profiles.list) {
-            if ($prof.name -match 'archlinux|Arch' -or ($prof.PSObject.Properties['source'] -and $prof.source -eq 'Microsoft.WSL')) {
-                $prof | Add-Member -NotePropertyName 'name' -NotePropertyValue 'Arch · WSL' -Force
-                $prof | Add-Member -NotePropertyName 'tabTitle' -NotePropertyValue 'Arch · WSL' -Force
-                $prof | Add-Member -NotePropertyName 'colorScheme' -NotePropertyValue 'Nocturne' -Force
-                $prof | Add-Member -NotePropertyName 'cursorColor' -NotePropertyValue '#7aa2f7' -Force
-                $prof | Add-Member -NotePropertyName 'bellStyle' -NotePropertyValue 'none' -Force
+            $source = if ($prof.PSObject.Properties['source']) { $prof.source }
+            if ($source -eq 'Microsoft.WSL' -and $prof.name -in @($WslDistro, 'Arch · WSL')) {
+                $title = 'Arch · WSL'
+                $accent = $schemeObj.brightBlue
+                if (-not $prof.PSObject.Properties['startingDirectory']) {
+                    $linuxHome = wsl.exe --distribution $WslDistro --cd '~' --exec pwd
+                    if ($LASTEXITCODE -eq 0 -and $linuxHome -match '^/') {
+                        $linuxHomeUnc = "\\wsl.localhost\$WslDistro" + ($linuxHome -replace '/', '\')
+                        $prof | Add-Member -NotePropertyName 'startingDirectory' -NotePropertyValue $linuxHomeUnc
+                    }
+                }
             }
-            elseif ($prof.PSObject.Properties['source'] -and $prof.source -eq 'Windows.Terminal.PowershellCore') {
-                $prof | Add-Member -NotePropertyName 'name' -NotePropertyValue 'PowerShell · host' -Force
-                $prof | Add-Member -NotePropertyName 'tabTitle' -NotePropertyValue 'PowerShell · host' -Force
-                $prof | Add-Member -NotePropertyName 'colorScheme' -NotePropertyValue 'Nocturne' -Force
-                $prof | Add-Member -NotePropertyName 'cursorColor' -NotePropertyValue '#bb9af7' -Force
-                $prof | Add-Member -NotePropertyName 'bellStyle' -NotePropertyValue 'none' -Force
+            elseif ($source -eq 'Windows.Terminal.PowershellCore') {
+                $title = 'PowerShell · host'
+                $accent = $schemeObj.brightPurple
+            }
+            elseif ($prof.PSObject.Properties['guid'] -and $prof.guid -eq '{61c54bbd-c2c6-5271-96e7-009a87ff44bf}') {
+                $title = 'PowerShell 5.1'
+                $accent = $schemeObj.brightPurple
+            }
+            else {
+                continue
+            }
+
+            $appearance = [ordered]@{
+                tabTitle = $title
+                colorScheme = 'Nocturne'
+                cursorColor = $accent
+                cursorShape = 'bar'
+                tabColor = $schemeObj.selectionBackground
+                opacity = 100
+                antialiasingMode = 'cleartype'
+                padding = '16, 12, 16, 12'
+                bellStyle = 'none'
+            }
+            foreach ($property in $appearance.GetEnumerator()) {
+                $existing = $prof.PSObject.Properties[$property.Key]
+                if ($existing) {
+                    $existing.Value = $property.Value
+                }
+                else {
+                    $prof | Add-Member -NotePropertyName $property.Key -NotePropertyValue $property.Value
+                }
+            }
+            if (-not $prof.PSObject.Properties['font'] -or $null -eq $prof.font) {
+                $prof | Add-Member -NotePropertyName 'font' -NotePropertyValue ([pscustomobject]@{}) -Force
+            }
+            foreach ($fontProperty in ([ordered]@{ face = $fontFace; size = 12 }).GetEnumerator()) {
+                $existing = $prof.font.PSObject.Properties[$fontProperty.Key]
+                if ($existing) {
+                    $existing.Value = $fontProperty.Value
+                }
+                else {
+                    $prof.font | Add-Member -NotePropertyName $fontProperty.Key -NotePropertyValue $fontProperty.Value
+                }
             }
         }
 
-        $wtObj | ConvertTo-Json -Depth 16 | Set-Content -Path $WtSettingsPath -Encoding UTF8
+        $after = $wtObj | ConvertTo-Json -Depth 100
+        if ($before -ceq $after) {
+            if (-not $Quiet) {
+                Write-Host "[UNCHANGED] Windows Terminal settings.json" -ForegroundColor DarkGray
+            }
+            return
+        }
+
+        New-Item -ItemType Directory -Path $BackupRoot -Force | Out-Null
+        $backup = Join-Path $BackupRoot 'WindowsTerminal_settings.json.bak'
+        $temp = Join-Path (Split-Path -Parent $WtSettingsPath) ("nocturne-" + [guid]::NewGuid() + ".tmp")
+        try {
+            [IO.File]::WriteAllText($temp, $after + [Environment]::NewLine)
+            [IO.File]::Replace($temp, $WtSettingsPath, $backup)
+        }
+        finally {
+            if (Test-Path -LiteralPath $temp) {
+                Remove-Item -LiteralPath $temp
+            }
+        }
         if (-not $Quiet) {
-            Write-Host "[SYNCED] Windows Terminal settings.json (Arch · WSL & PowerShell · host) -> $WtSettingsPath" -ForegroundColor Green
+            Write-Host "[SYNCED] Windows Terminal settings.json (Arch · WSL & PowerShell · host) -> $WtSettingsPath | Backup: $backup" -ForegroundColor Green
         }
     }
 }

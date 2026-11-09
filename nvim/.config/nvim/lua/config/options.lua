@@ -7,11 +7,11 @@ opt.number = true
 opt.relativenumber = true
 opt.cursorline = true
 opt.signcolumn = "yes"
-opt.colorcolumn = "100"
 opt.termguicolors = true
 opt.showmode = false
 opt.laststatus = 3
 opt.cmdheight = 1
+opt.winborder = "rounded"
 
 opt.expandtab = true
 opt.shiftwidth = 4

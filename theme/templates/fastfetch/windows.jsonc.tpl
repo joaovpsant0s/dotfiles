@@ -1,33 +1,37 @@
 {
     "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
     "logo": {
-        "type": "small",
+        "type": "file",
+        "source": "~/.config/fastfetch/logo-windows.txt",
+        "color": {
+            "1": "{{ACCENT_PURPLE}}",
+            "2": "{{ACCENT_BLUE}}"
+        },
         "padding": {
-            "top": 0,
+            "top": 1,
             "left": 1,
             "right": 3
         }
     },
     "display": {
-        "separator": "   ",
+        "separator": "  ",
         "color": {
             "keys": "{{ACCENT_PURPLE}}",
-            "title": "{{ACCENT_PURPLE}}"
+            "title": "{{ACCENT_PURPLE}}",
+            "output": "{{FOREGROUND}}"
         }
     },
     "modules": [
         {
             "type": "custom",
-            "format": "\u001b[1;38;2;187;154;247mhost\u001b[0m"
+            "format": "nocturne  /  host",
+            "outputColor": "{{ACCENT_PURPLE}}"
         },
-        {
-            "type": "custom",
-            "format": "\u001b[38;2;59;66;97m────────────────\u001b[0m"
-        },
+        "break",
         {
             "type": "os",
             "key": "os    ",
-            "format": "Windows 11"
+            "format": "{pretty-name}"
         },
         {
             "type": "shell",
@@ -35,9 +39,25 @@
             "format": "{process-name}"
         },
         {
+            "type": "kernel",
+            "key": "build ",
+            "format": "{release}"
+        },
+        {
+            "type": "cpu",
+            "key": "cpu   ",
+            "format": "{name} · {cores-logical}t"
+        },
+        {
+            "type": "gpu",
+            "key": "gpu   ",
+            "format": "{name}",
+            "hideType": "integrated"
+        },
+        {
             "type": "memory",
             "key": "mem   ",
-            "format": "{used} / {total}"
+            "format": "{used} / {total}  {percentage}"
         },
         {
             "type": "uptime",

@@ -55,7 +55,7 @@ ALGO_DIR="$TMP_TEST/apc_ex1"
 "$WB_BIN" algo-check "$ALGO_DIR/solution.py" "$ALGO_DIR/input.txt" "$ALGO_DIR/expected.txt" --yes
 echo "[OK] Compilação C (gcc -O2 -Wall -Wextra -std=c17) e execução Python 3 validadas com sucesso."
 
-echo "=== [TEST] 6/6 Validando Fastfetch v2.1 em 120, 80 e 60 colunas (com e sem TMUX) ==="
+echo "=== [TEST] 6/6 Validando Fastfetch em 120, 80, 79 e 60 colunas (com e sem TMUX) ==="
 python3 - "$REPO_ROOT" << 'PYEOF'
 import os
 import re
@@ -66,10 +66,12 @@ repo_root = sys.argv[1]
 ff_bin = f"{repo_root}/rice-bin/.local/bin/fastfetch"
 ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 
-for cols in (120, 80, 60):
+for cols in (120, 80, 79, 60):
     for tmux_val in ("", "/tmp/tmux-1000/default,123,0"):
         env = os.environ.copy()
+        env["TERM"] = "xterm-256color"
         env["COLUMNS"] = str(cols)
+        env.pop("NOCTURNE_ASCII", None)
         env["NOCTURNE_FORCE_TTY"] = "1"
         env["XDG_CONFIG_HOME"] = f"{repo_root}/fastfetch/.config"
         if tmux_val:
@@ -85,5 +87,9 @@ for cols in (120, 80, 60):
         joined = "\n".join(visible_lines)
         if "i use arch, btw" not in joined:
             sys.exit(f"[FAIL] 'i use arch, btw' ausente em {cols} colunas!")
+        wide = cols >= 80
+        for label in ("cpu", "disk", "pkgs"):
+            if bool(re.search(rf"\b{label} {{2,}}", joined)) != wide:
+                sys.exit(f"[FAIL] Preset inesperado em {cols} colunas: campo {label}.")
         print(f"  [OK] cols={cols:<3} tmux={str(bool(tmux_val)):<5} -> max_visible_width={max_len} (<= {cols})")
 PYEOF

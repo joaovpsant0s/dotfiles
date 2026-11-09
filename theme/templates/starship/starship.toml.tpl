@@ -40,8 +40,8 @@ error_symbol = "[❯](bold fg:error)"
 vimcmd_symbol = "[❮](bold fg:success)"
 
 [directory]
-style = "bold fg:foreground"
-format = "[$path]($style)[$read_only]($read_only_style)  "
+style = "bold fg:foreground bg:surface_alt"
+format = "[ ▲ ](bold fg:background_alt bg:accent_blue)[ $path ]($style)[$read_only]($read_only_style)  "
 truncation_length = 4
 truncate_to_repo = false
 truncation_symbol = "…/"
@@ -51,7 +51,7 @@ read_only_style = "fg:error"
 [git_branch]
 symbol = ""
 style = "bold fg:accent_blue"
-format = "on [$branch]($style)"
+format = "[↳ $branch]($style)"
 
 [git_status]
 style = "bold fg:warning"

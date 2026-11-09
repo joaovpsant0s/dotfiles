@@ -8,13 +8,18 @@ collect_candidates() {
   if command -v tmux >/dev/null 2>&1; then
     tmux list-sessions -F "[tmux] #S" 2>/dev/null || true
   fi
-  if command -v zoxide >/dev/null 2>&1; then
-    zoxide query -l 2>/dev/null | head -n 30 || true
-  fi
-  find "$HOME" -maxdepth 2 -mindepth 1 -type d \
-    ! -name ".*" \
-    ! -name "yay" \
-    2>/dev/null | sort -u
+  {
+    if command -v zoxide >/dev/null 2>&1; then
+      zoxide query -l 2>/dev/null | head -n 30 || true
+    fi
+    for root in "$HOME/dev" "$HOME/projects"; do
+      if [ -d "$root" ]; then
+        find "$root" -mindepth 1 -maxdepth 1 -type d ! -name '.*' | sort
+      fi
+    done
+    find "$HOME" -maxdepth 2 -mindepth 1 \
+      \( -name '.*' -o -name yay \) -prune -o -type d -print | sort
+  } | awk '!seen[$0]++'
 }
 
 if [ "${1:-}" = "--list" ]; then

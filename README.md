@@ -25,7 +25,7 @@
 
 - **Ecossistema `glibc` completo do Arch Linux (`pacman` + `yay`)**: compiladores, Language Servers, formatadores e ferramentas TUI nativas sem gambiarras de compatibilidade.
 - **Single Source of Truth Theme Engine (`theme/palette.toml` + `theme/generate.sh`)**: 3 variantes (`night`, `storm`, `moon`) × 6 acentos (`blue`, `purple`, `cyan`, `green`, `orange`, `red`) = **18 temas gerados atomicamente** para 18 destinos (Windows Terminal, WezTerm, PowerShell, Zsh, Bash, Starship, Tmux, Neovim, Yazi, Btop, Lazygit, Lazydocker, Delta, Fastfetch, GlazeWM e Zebar).
-- **Fastfetch Responsivo (`arch, btw`)**: arte compacta do `A` do Arch em azul (`#7aa2f7`), resumo enxuto de 4 linhas (`os`, `shell`, `mem`, `up`), adaptação automática para 120, 80 e 60 colunas e modo diagnóstico completo sob demanda (`fastfetch --full`).
+- **Fastfetch responsivo** — assinatura bicolor, painel com sistema, shell, pacotes, CPU, GPU dedicada, RAM, disco raiz e uptime. Em painéis estreitos, exibe uma versão curta. Use `fastfetch --full` para diagnóstico.
 - **Prompt Starship Unificado (Zsh, Bash e PowerShell)**: layout minimalista de 2 linhas com símbolo `❯` em azul no Arch, lilás no PowerShell, vermelho em erro e proteção de I/O para volumes NTFS (`/mnt/*`).
 - **Aceleração GPU CUDA no WSL 2**: wrapper `~/.local/bin/docker` com injeção automática de `/dev/dxg` e `/usr/lib/wsl` ao detectar `--gpus`.
 
@@ -33,24 +33,34 @@
 
 ## 2. Identidade Visual no Terminal
 
-### Fastfetch (`arch / i use arch, btw`)
-```text
-      /\        arch
-     /  \       ────────────────
-    / /\ \      os       Arch Linux · WSL 2
-   / /  \ \     shell    zsh
-  / /____\ \    mem      1.1 GiB / 7.6 GiB
- /_/      \_\   up       42 mins
+### Nocturne Night
 
-                i use arch, btw
-```
+A paleta Night usa azul quase preto, texto claro e lavanda como acento. O Arch e o PowerShell têm marcas próprias em azul e lilás. O Windows Terminal prefere **GeistMono Nerd Font Mono**, com JetBrainsMono Nerd Font Mono e Cascadia Mono como alternativas.
+
+No Neovim, abra `nvim` para ver o painel do Snacks. Use **f** para buscar, **r** para recentes, **p** para projetos e **g** para Git. O seletor alterna entre prévia lateral e empilhada conforme a largura.
+
+### Fastfetch
+
+- `fastfetch` — painel responsivo. O preset curto cabe em splits.
+- `fastfetch --compact` — sistema, shell, memória e uptime.
+- `fastfetch --full` — diagnóstico com kernel, terminal, GPUs e outros dados.
+- No Windows, a marca em quatro painéis identifica o host. A RAM e o build são os do Windows.
+- Copie `Sync-WindowsRice.ps1` para uma pasta local do Windows e execute com `-AppearanceOnly -WhatIf` para prever a sincronização da aparência, incluindo Starship, WezTerm e Zebar. Remova `-WhatIf` para aplicar.
+
+### Fluxo diário no Arch
+
+Use `~/dev` ou `~/projects` para projetos no filesystem do Arch. O seletor de sessões reúne sessões abertas, destinos recentes do Zoxide e diretórios locais. Deixe os volumes `/mnt/*` para trocar arquivos com o host.
+
+1. Abra **Arch · WSL** no Windows Terminal e rode `wb code ~/dev/meu-projeto`. A primeira janela abre o Neovim, a segunda é o shell e a terceira abre o Lazygit quando o diretório está em um repositório Git.
+2. No tmux, use `Ctrl+a` seguido de `s` para trocar de sessão, `y` para Yazi, `g` para Lazygit ou `b` para btop. Fora do tmux, a função `y` acompanha o último diretório escolhido no Yazi.
+3. Use `wb study` para notas com Neovim e `wb algo` para exercícios. Use `explorer.exe .` quando quiser abrir a pasta atual no Windows.
 
 ### Prompt Unificado (Arch WSL & Windows PowerShell)
 ```text
-~/nocturne  on main *
+▲  ~/nocturne  ↳ main *
 ❯ 
 
-C:\Users\joaovpsantos\projects  on main *
+C:\Users\joaovpsantos\projects  ↳ main *
 ❯ 
 ```
 
@@ -64,7 +74,7 @@ rice theme night blue
 rice theme storm purple
 rice theme moon cyan
 
-# Fastfetch (resumo 4 linhas vs diagnóstico completo):
+# Fastfetch (painel responsivo vs diagnóstico completo):
 fastfetch               # Resumo responsivo (120 / 80 / 60 colunas)
 fastfetch --full        # Ficha técnica completa (CPU, GPUs, Kernel, Disk, Packages)
 

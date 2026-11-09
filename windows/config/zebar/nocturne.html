@@ -1,58 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="./theme.css" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
     body {
-      background: var(--bn-bg-alt, #16161e);
-      color: var(--bn-fg, #c0caf5);
-      font-family: "GeistMono Nerd Font", "Geist Mono", "JetBrains Mono", monospace;
-      font-size: 12px;
+      margin: 0;
+      padding: 0 12px;
       height: 30px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 14px;
-      border-bottom: 1px solid var(--bn-border, #3b4261);
-      user-select: none;
+      background: var(--bn-bg-alt);
+      color: var(--bn-fg);
+      border-bottom: 1px solid var(--bn-border);
+      font: 12px "GeistMono Nerd Font Mono", "Cascadia Mono", monospace;
     }
-    .section { display: flex; align-items: center; gap: 12px; }
-    .brand {
-      color: var(--bn-accent, #7aa2f7);
-      font-weight: 700;
-      letter-spacing: 0.06em;
-    }
-    .sep { color: var(--bn-border, #3b4261); }
-    .pill {
-      background: var(--bn-surface, #24283b);
-      color: var(--bn-fg-muted, #a9b1d6);
+    .section { display: flex; align-items: center; gap: 9px; }
+    .brand { color: var(--bn-accent); font-weight: 700; letter-spacing: .12em; }
+    .tag { color: var(--bn-fg-muted); }
+    .clock {
       padding: 2px 8px;
-      border-radius: 3px;
+      border-radius: 4px;
+      background: var(--bn-selection);
+      font-variant-numeric: tabular-nums;
     }
   </style>
 </head>
 <body>
   <div class="section">
-    <span class="brand">▲ NOCTURNE // arch</span>
-    <span class="sep">│</span>
-    <span class="pill">WSL 2</span>
+    <span class="brand">▲ NOCTURNE</span>
+    <span class="tag">/ WINDOWS HOST</span>
   </div>
   <div class="section">
-    <span id="clock" class="pill">--:--</span>
+    <span id="date" class="tag"></span>
+    <time id="clock" class="clock"></time>
   </div>
   <script>
+    const day = new Intl.DateTimeFormat("pt-BR", { weekday: "short", day: "2-digit", month: "short" });
+    const time = new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit" });
     function updateClock() {
       const now = new Date();
-      document.getElementById('clock').textContent =
-        now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }) +
-        ' · ' +
-        now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      document.querySelector("#date").textContent = day.format(now);
+      document.querySelector("#clock").textContent = time.format(now);
     }
     updateClock();
-    setInterval(updateClock, 10000);
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>

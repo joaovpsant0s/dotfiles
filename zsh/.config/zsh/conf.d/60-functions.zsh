@@ -5,13 +5,14 @@ y() {
     echo "[WARN] yazi não encontrado." >&2
     return 1
   fi
-  local tmp
-  tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-  yazi "$@" --cwd-file="$tmp"
-  if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+  local tmp cwd yazi_status=0
+  tmp="$(mktemp -t "yazi-cwd.XXXXXX")" || return
+  yazi "$@" --cwd-file="$tmp" || yazi_status=$?
+  if (( yazi_status == 0 )) && cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
     builtin cd -- "$cwd"
   fi
   rm -f -- "$tmp"
+  return "$yazi_status"
 }
 
 mkcd() {

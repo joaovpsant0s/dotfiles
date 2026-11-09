@@ -1,6 +1,6 @@
 # =============================================================================
 # NOCTURNE — GLAZEWM v3 CONFIGURATION
-# Geometria Modernista · Gaps 10px · Bordas Sincronizadas pelo Theme Engine
+# Bordas e contraste vindos da paleta do Nocturne
 # =============================================================================
 general:
   startup_commands: ['shell-exec zebar']
@@ -18,22 +18,22 @@ general:
 
 gaps:
   scale_with_dpi: true
-  inner_gap: '10px'
+  inner_gap: '8px'
   outer_gap:
-    top: '38px'
-    right: '10px'
-    bottom: '10px'
-    left: '10px'
+    top: '36px'
+    right: '8px'
+    bottom: '8px'
+    left: '8px'
 
 window_effects:
   focused_window:
     border:
       enabled: true
-      color: '#bb9af7'
+      color: '{{ACCENT}}'
   other_windows:
     border:
       enabled: true
-      color: '#3b4261'
+      color: '{{BORDER}}'
 
 window_behavior:
   initial_state: 'tiling'
@@ -111,7 +111,7 @@ keybindings:
     bindings: ['alt+shift+q']
   - commands: ['wm-reload-config']
     bindings: ['alt+shift+r']
-  - commands: ['shell-exec wezterm-gui']
+  - commands: ['shell-exec wt.exe']
     bindings: ['alt+enter']
 
   - commands: ['focus --workspace 1']

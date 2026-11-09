@@ -201,6 +201,10 @@ targets = [
         "theme/generated/fastfetch/windows.jsonc",
         "windows/config/fastfetch/config.jsonc",
     ]),
+    ("glazewm/config.yaml.tpl", [
+        "theme/generated/glazewm/config.yaml",
+        "windows/config/glazewm/config.yaml",
+    ]),
     ("glazewm/theme.yaml.tpl", [
         "theme/generated/glazewm/theme.yaml",
         "windows/config/glazewm/theme.yaml",

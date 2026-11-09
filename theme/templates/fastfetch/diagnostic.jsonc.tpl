@@ -4,7 +4,8 @@
         "type": "file",
         "source": "~/.config/fastfetch/logo-arch.txt",
         "color": {
-            "1": "{{ACCENT_BLUE}}"
+            "1": "{{ACCENT_BLUE}}",
+            "2": "{{ACCENT_CYAN}}"
         },
         "padding": {
             "top": 0,

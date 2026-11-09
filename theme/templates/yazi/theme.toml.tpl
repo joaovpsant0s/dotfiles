@@ -3,35 +3,48 @@
 
 [mgr]
 cwd = { fg = "{{ACCENT}}", bold = true }
-hovered = { fg = "{{BACKGROUND_ALT}}", bg = "{{ACCENT}}", bold = true }
-preview_hovered = { underline = true }
 find_keyword = { fg = "{{WARNING}}", bold = true, italic = true }
 find_position = { fg = "{{ACCENT_SECONDARY}}", bg = "reset", bold = true }
 marker_copied = { fg = "{{SUCCESS}}", bg = "{{SUCCESS}}" }
 marker_cut = { fg = "{{ERROR}}", bg = "{{ERROR}}" }
 marker_marked = { fg = "{{INFO}}", bg = "{{INFO}}" }
 marker_selected = { fg = "{{ACCENT}}", bg = "{{ACCENT}}" }
-tab_active = { fg = "{{BACKGROUND_ALT}}", bg = "{{ACCENT}}", bold = true }
-tab_inactive = { fg = "{{FOREGROUND_MUTED}}", bg = "{{SURFACE}}" }
-tab_width = 1
 border_symbol = "│"
 border_style = { fg = "{{BORDER}}" }
+symlink_target = { fg = "{{FOREGROUND_SUBTLE}}" }
+
+[indicator]
+parent = { bg = "{{SURFACE}}" }
+current = { fg = "{{FOREGROUND}}", bg = "{{SELECTION}}", bold = true }
+preview = { bg = "{{SURFACE_ALT}}" }
+padding = { open = " ", close = " " }
+
+[tabs]
+active = { fg = "{{BACKGROUND_ALT}}", bg = "{{ACCENT}}", bold = true }
+inactive = { fg = "{{FOREGROUND_MUTED}}", bg = "{{SURFACE}}" }
+sep_inner = { open = " ", close = " " }
+sep_outer = { open = "", close = "" }
+
+[mode]
+normal_main = { fg = "{{BACKGROUND_ALT}}", bg = "{{ACCENT}}", bold = true }
+normal_alt = { fg = "{{ACCENT}}", bg = "{{SURFACE_ALT}}" }
+select_main = { fg = "{{BACKGROUND_ALT}}", bg = "{{SUCCESS}}", bold = true }
+select_alt = { fg = "{{SUCCESS}}", bg = "{{SURFACE_ALT}}" }
+unset_main = { fg = "{{BACKGROUND_ALT}}", bg = "{{WARNING}}", bold = true }
+unset_alt = { fg = "{{WARNING}}", bg = "{{SURFACE_ALT}}" }
 
 [status]
-separator_open = ""
-separator_close = ""
-separator_style = { fg = "{{SURFACE}}", bg = "{{BACKGROUND_ALT}}" }
-mode_normal = { fg = "{{BACKGROUND_ALT}}", bg = "{{ACCENT}}", bold = true }
-mode_select = { fg = "{{BACKGROUND_ALT}}", bg = "{{SUCCESS}}", bold = true }
-mode_unset = { fg = "{{BACKGROUND_ALT}}", bg = "{{WARNING}}", bold = true }
+overall = { fg = "{{FOREGROUND_MUTED}}", bg = "{{BACKGROUND_ALT}}" }
+sep_left = { open = "", close = " " }
+sep_right = { open = " ", close = "" }
 progress_label = { fg = "{{FOREGROUND}}", bold = true }
 progress_normal = { fg = "{{ACCENT}}", bg = "{{SURFACE}}" }
 progress_error = { fg = "{{ERROR}}", bg = "{{SURFACE}}" }
-permissions_t = { fg = "{{INFO}}" }
-permissions_r = { fg = "{{WARNING}}" }
-permissions_w = { fg = "{{ERROR}}" }
-permissions_x = { fg = "{{SUCCESS}}" }
-permissions_s = { fg = "{{FOREGROUND_SUBTLE}}" }
+perm_type = { fg = "{{INFO}}" }
+perm_read = { fg = "{{WARNING}}" }
+perm_write = { fg = "{{ERROR}}" }
+perm_exec = { fg = "{{SUCCESS}}" }
+perm_sep = { fg = "{{FOREGROUND_SUBTLE}}" }
 
 [input]
 border = { fg = "{{ACCENT}}" }

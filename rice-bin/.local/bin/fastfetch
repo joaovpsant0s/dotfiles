@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # NOCTURNE — RESPONSIVE FASTFETCH WRAPPER
-# - Sem argumentos: seleciona config.jsonc (>=68 cols) ou compact.jsonc (<68 cols)
+# - Sem argumentos: seleciona config.jsonc (>=80 cols) ou compact.jsonc (<80 cols)
 # - --full / --diag: abre o preset completo diagnostic.jsonc
 # - Qualquer outra flag: repassa diretamente para /usr/bin/fastfetch
 # =============================================================================
@@ -14,6 +14,11 @@ if [ ! -x "$SYS_FF" ]; then
 fi
 
 CFG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/fastfetch"
+export NOCTURNE_WSL_SUFFIX=""
+if read -r kernel_release < /proc/sys/kernel/osrelease && [[ "$kernel_release" == *[Mm]icrosoft*WSL2* ]]; then
+  NOCTURNE_WSL_SUFFIX=" · WSL 2"
+fi
+
 
 if [ $# -gt 0 ]; then
   case "$1" in
@@ -36,17 +41,22 @@ if [ ! -t 1 ] && [ -z "${NOCTURNE_FORCE_TTY:-}" ]; then
   exec "$SYS_FF" --config "$CFG_DIR/compact.jsonc" --pipe true
 fi
 
-# Detect terminal width (COLUMNS -> tput cols -> stty size -> default 100)
-COLS="${COLUMNS:-}"
+# Use the output TTY width even when stdin is redirected or COLUMNS is stale.
+COLS=""
+if [ -t 1 ]; then
+  { SIZE="$(stty size <&3 2>/dev/null || true)"; } 3>&1
+  COLS="${SIZE##* }"
+fi
+COLS="${COLS:-${COLUMNS:-}}"
 if [ -z "$COLS" ] && command -v tput >/dev/null 2>&1; then
   COLS="$(tput cols 2>/dev/null || true)"
 fi
 if [ -z "$COLS" ] || ! [[ "$COLS" =~ ^[0-9]+$ ]] || [ "$COLS" -le 0 ]; then
-  COLS=100
+  COLS=0
 fi
 
 # Fallback when NOCTURNE_ASCII=1 or TERM=linux/dumb
-if [ "${NOCTURNE_ASCII:-0}" = "1" ] || [ "${TERM:-}" = "linux" ] || [ "${TERM:-}" = "dumb" ] || [ "$COLS" -lt 68 ]; then
+if [ "${NOCTURNE_ASCII:-0}" = "1" ] || [ "${TERM:-}" = "linux" ] || [ "${TERM:-}" = "dumb" ] || [ "$COLS" -lt 80 ]; then
   exec "$SYS_FF" --config "$CFG_DIR/compact.jsonc"
 else
   exec "$SYS_FF" --config "$CFG_DIR/config.jsonc"
