@@ -56,7 +56,10 @@ ALGO_DIR="$TMP_TEST/apc_ex1"
 echo "[OK] Compilação C (gcc -O2 -Wall -Wextra -std=c17) e execução Python 3 validadas com sucesso."
 
 echo "=== [TEST] 6/6 Validando Fastfetch em 120, 80, 79 e 60 colunas (com e sem TMUX) ==="
-python3 - "$REPO_ROOT" << 'PYEOF'
+FETCH_HOME="$TMP_TEST/fastfetch-home"
+mkdir -p "$FETCH_HOME/.config"
+ln -s "$REPO_ROOT/fastfetch/.config/fastfetch" "$FETCH_HOME/.config/fastfetch"
+python3 - "$REPO_ROOT" "$FETCH_HOME" << 'PYEOF'
 import os
 import re
 import subprocess
@@ -69,6 +72,7 @@ ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 for cols in (120, 80, 79, 60):
     for tmux_val in ("", "/tmp/tmux-1000/default,123,0"):
         env = os.environ.copy()
+        env["HOME"] = sys.argv[2]
         env["TERM"] = "xterm-256color"
         env["COLUMNS"] = str(cols)
         env.pop("NOCTURNE_ASCII", None)
@@ -88,6 +92,8 @@ for cols in (120, 80, 79, 60):
         if "i use arch, btw" not in joined:
             sys.exit(f"[FAIL] 'i use arch, btw' ausente em {cols} colunas!")
         wide = cols >= 80
+        if ("▟" in joined) != wide:
+            sys.exit(f"[FAIL] Logo inesperado em {cols} colunas.")
         for label in ("cpu", "disk", "pkgs"):
             if bool(re.search(rf"\b{label} {{2,}}", joined)) != wide:
                 sys.exit(f"[FAIL] Preset inesperado em {cols} colunas: campo {label}.")
